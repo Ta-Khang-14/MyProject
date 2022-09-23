@@ -1,0 +1,21 @@
+:root {
+    --menu-background-color: #041434;
+    --bg-color: #eeeff1;
+
+    --main-green-color: #50b83c;
+    --color-border: #e0e0e0;
+    --color-white: #fff;
+    --color-black: #000000;
+    --color-blue: #0062cc;
+
+    --table-head-color: #e5e8ec;
+    --table-row-hover: #96d58a;
+    --table-border-color: #e0e0e0;
+
+    --input-err-background: #263237;
+    --input-error-border: #e60000;
+
+    --button-gray-color: #757575;
+    --button-green-color: #73c663;
+    --button-gray-hover: #eeeeee;
+}

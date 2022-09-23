@@ -1,0 +1,108 @@
+/* ICON  */
+.icon {
+    background: url("../../Resource/img/Sprites.64af8f61.svg");
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.icon--toggle {
+    background-position: -424px -88px;
+}
+.icon--overview {
+    background-position: -30px -1628px;
+}
+.icon--money {
+    background-position: -73px -1628px;
+}
+.icon--credit {
+    background-position: -117px -1628px;
+}
+.icon--buy {
+    background-position: -161px -1628px;
+}
+.icon--sell {
+    background-position: -204px -1628px;
+}
+.icon--order {
+    background-position: -249px -1628px;
+}
+.icon--warehouse {
+    background-position: -294px -1628px;
+}
+.icon--tool {
+    background-position: -336px -1628px;
+}
+.icon--asset {
+    background-position: -379px -1630px;
+}
+.icon--tax {
+    background-position: -423px -1630px;
+}
+.icon--price {
+    background-position: -467px -1628px;
+}
+.icon--total {
+    background-position: -510px -1628px;
+}
+.icon--budget {
+    background-position: -548px -1631px;
+}
+.icon--report {
+    background-position: -378px -1660px;
+}
+.icon--analysis {
+    background-position: -205px -1662px;
+}
+.icon--list {
+    background-position: -844px -30px;
+}
+.icon--arrowDown {
+    background-position: -1124px -357px;
+}
+.icon--avt {
+    background: url("../../Resource/img/Sprites.64af8f61.svg") no-repeat -352px -894px;
+    width: 32px;
+    height: 32px;
+}
+.icon--bell {
+    background-position: -788px -30px;
+}
+.icon__arrowDown--black {
+    background: url("../../Resource/img/Sprites.64af8f61.svg") no-repeat;
+    background-position: -564px -365px;
+    width: 8px;
+    height: 5px;
+}
+.icon--infor {
+    background-position: -88px -143px;
+}
+.icon--close {
+    background-position: -143px -143px;
+}
+.icon--search {
+    background-position: -313px -144px;
+}
+.icon--refresh {
+    background-position: -1096px -88px;
+}
+.icon__arrowDown--bold {
+    background: url("../../Resource/img/Sprites.64af8f61.svg") no-repeat;
+    background-position: -900px -365px;
+    width: 8px;
+    height: 5px;
+}
+.icon__warning {
+    background: url("../../Resource/img/Sprites.64af8f61.svg") no-repeat;
+    background-position: -598px -463px;
+    width: 36px;
+    height: 37px;
+}
+.icon__question {
+    background: url("../../Resource/img/Sprites.64af8f61.svg") no-repeat;
+    background-position: -832px -462px;
+    width: 36px;
+    height: 37px;
+}

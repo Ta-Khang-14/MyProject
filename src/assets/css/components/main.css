@@ -1,0 +1,203 @@
+.main {
+    height: calc(100vh - 56px);
+    width: 100%;
+    padding: 24px;
+}
+.main--function {
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.main--function .button {
+    background-color: var(--main-green-color);
+    color: var(--color-white);
+    font-family: MISA fonts medium;
+}
+
+.main__table {
+    height: calc(100% - 62px);
+    background-color: var(--color-white);
+    border-radius: 2px;
+    position: relative;
+    padding: 16px;
+    padding-bottom: 0;
+}
+.main__table--search {
+    justify-content: right;
+    margin-bottom: 24px;
+}
+.input {
+    position: relative;
+}
+.input.input__icon input {
+    padding-right: 28px !important;
+}
+.input--icon {
+    position: absolute;
+    top: calc(50% - 12px);
+    right: 2px;
+}
+.main__table--search .input input::placeholder {
+    font-family: MISA fonts italic;
+}
+.main__table--search .main__table--refresh {
+    width: 32px;
+    height: 32px;
+    margin-left: 16px;
+    align-items: center;
+    justify-content: center;
+}
+.main__table {
+    height: calc(100% - 48px);
+}
+.main__table--content {
+    height: calc(100% - 112px);
+}
+.main__table--detail {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    position: relative;
+}
+.main__table--detail table thead {
+    position: sticky;
+    top: 0;
+    z-index: 11;
+}
+.main__table--detail table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0px;
+    overflow: auto;
+    white-space: nowrap;
+}
+.main__table--detail table th {
+    text-transform: uppercase;
+    font-size: 11px;
+}
+.main__table--detail table tr {
+    height: 48px;
+}
+.main__table--detail table thead tr {
+    background-color: var(--table-head-color);
+}
+.main__table--detail table th,
+.main__table--detail table td {
+    padding: 0px 8px;
+    cursor: pointer;
+}
+.main__table--detail table .input--selected {
+    width: 16px;
+    height: 16px;
+}
+.main__table--detail table td,
+.main__table--detail table td {
+    border-bottom: 1px solid var(--table-border-color);
+}
+.main__table--detail table tr td {
+    border-right: 1px dotted var(--table-border-color);
+    border-top: none;
+}
+.main__table--detail table tr th {
+    border-right: 1px solid var(--table-border-color);
+}
+.main__table--detail table tr.table__row--bold:hover {
+    background-color: var(--table-row-hover);
+    cursor: pointer;
+}
+/* CUSTOM STICKY TABLE COLUMN */
+.main__table--detail table tr td:last-child,
+.main__table--detail table tr td:first-child,
+.main__table--detail table tr th:last-child,
+.main__table--detail table tr th:first-child {
+    position: sticky;
+    top: 0;
+}
+
+.main__table--detail table tr th:last-child,
+.main__table--detail table tr th:first-child {
+    background-color: var(--table-head-color);
+}
+
+.main__table--detail table tr td:last-child,
+.main__table--detail table tr td:first-child {
+    background-color: var(--color-white);
+}
+.main__table--detail table tr td:last-child,
+.main__table--detail table tr th:last-child {
+    right: 0;
+    border-right: unset;
+    border-left: 1px solid var(--table-border-color);
+}
+.main__table--detail table tr td:first-child,
+.main__table--detail table tr th:first-child {
+    left: 0;
+}
+.main__table--detail table tr.table__row--bold:hover td:first-child,
+.main__table--detail table tr.table__row--bold:hover td:last-child {
+    background-color: var(--table-row-hover);
+}
+/* ---------------------PAGINGS------------------------ */
+.paging--pages .cbx__button.clicked div#icon__arrowDown--black {
+    transform: rotate(180deg);
+}
+.paging {
+    align-items: center;
+}
+.paging--pages .combobox {
+    margin-right: 16px;
+}
+.paging .pages__item {
+    cursor: pointer;
+    margin-left: 4px;
+    padding: 4px 8px;
+}
+.paging .pages__item:hover {
+    border: 1px solid var(--color-border);
+    font-family: MISA fonts bold;
+}
+.paging .pages__item.isActive {
+    border: 1px solid var(--color-border);
+    font-family: MISA fonts bold;
+}
+.table__item--option {
+    padding-right: 6px;
+    padding-left: 12px;
+}
+.table__item--option .combobox {
+    margin-left: 6px;
+}
+.table__item--option .combobox .combobox__data {
+    bottom: unset;
+    top: calc(100% + 2px);
+}
+.table__item--option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.table__item--option .custom__text {
+    font-family: MISA fonts medium;
+    color: var(--color-blue);
+}
+.table__item--option .combobox .cbx_button {
+    border: 1px solid var(--color-blue) !important;
+}
+.table__item--option .combobox {
+    width: 32px;
+}
+.table__item--option .combobox .combobox__data {
+    border-radius: 0 !important;
+    left: unset;
+    z-index: 10;
+}
+.table__item--option .combobox .combobox__data .combobox__item {
+    text-align: left;
+    white-space: nowrap;
+}
+.table__item--option .combobox .cbx__button {
+    border-radius: 0;
+}
+.table__item--option .combobox .cbx__button.cbx__button.clicked {
+    background-color: unset;
+    border: 1px solid var(--color-blue);
+}

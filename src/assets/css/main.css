@@ -1,0 +1,140 @@
+/* IMPORT BASE CSS  */
+@import url(./base/color.css);
+@import url(./base/icon.css);
+@import url(./base/dialog.css);
+
+/* IMPORT COMPONENT CSS  */
+@import url(./components/menu-left.css);
+@import url(./components/header.css);
+@import url(./components/main.css);
+@import url(./components/combobox.css);
+@import url(./components/droplist.css);
+@import url(./components/input.css);
+
+* {
+    font-family: MISA Fonts;
+
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    line-height: 16px;
+    color: var(--color-black);
+}
+
+body {
+    background-color: var(--bg-color);
+}
+
+@font-face {
+    font-family: MISA Fonts;
+    src: url(../Resource/fonts/notosans-regular.2cb88a13.woff2);
+}
+
+@font-face {
+    font-family: MISA Fonts medium;
+    src: url(../Resource/fonts/notosans-semibold.df3e6dc4.woff2);
+}
+
+@font-face {
+    font-family: MISA Fonts bold;
+    src: url(../Resource/fonts/notosans-bold.3ede5aff.woff2);
+}
+
+@font-face {
+    font-family: MISA Fonts italic;
+    src: url(../Resource/fonts/notosans-italic.1c1aaac9.woff2);
+}
+
+ul {
+    list-style: none;
+}
+
+.flex {
+    display: flex;
+}
+
+.content {
+    width: 100%;
+    overflow: hidden;
+}
+.title {
+    font-size: 24px;
+    line-height: 32px;
+    font-family: MISA fonts bold;
+}
+.button {
+    height: 32px;
+    text-align: center;
+    line-height: 18px;
+    padding: 7px 16px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.input input {
+    width: 240px;
+    height: 32px;
+    outline: none;
+    border-radius: 2px;
+    border: 1px solid var(--color-border);
+    padding: 0px 16px;
+}
+
+.text--left {
+    text-align: left;
+}
+.text--right {
+    text-align: right;
+}
+.text--center {
+    text-align: center;
+}
+b {
+    font-family: MISA Fonts bold;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.cl--6 {
+    flex-basis: 50%;
+}
+.cl--12 {
+    flex-basis: 100%;
+}
+.cl--5 {
+    flex-basis: 41.67%;
+}
+.cl--7 {
+    flex-basis: 58.33%;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+    border-radius: 2px;
+    height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+::-webkit-scrollbar-track {
+    border-radius: 2px;
+}

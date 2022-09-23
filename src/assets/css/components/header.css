@@ -1,0 +1,39 @@
+.header {
+    height: 56px;
+    padding: 0px 24px;
+    align-items: center;
+    background-color: var(--color-white);
+    width: 100%;
+    justify-content: space-between;
+}
+.header__company--icon {
+    margin-right: 12px;
+}
+.header__company--item {
+    font-family: MISA fonts medium;
+    margin-right: 8px;
+    line-height: 24px;
+    cursor: pointer;
+}
+.header__user {
+    height: 32px;
+}
+.header__user,
+.header__user--detail {
+    align-items: center;
+}
+.header__user--name {
+    font-family: MISA fonts medium;
+    margin-right: 8px;
+    cursor: pointer;
+}
+.header__user--avt {
+    border-radius: 18px;
+    overflow: hidden;
+    margin-right: 24px;
+    cursor: pointer;
+}
+.header__user--notification {
+    margin-right: 24px;
+    cursor: pointer;
+}

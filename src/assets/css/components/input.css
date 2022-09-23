@@ -1,0 +1,16 @@
+.input__field {
+    position: relative;
+}
+.input__field .input__msg {
+    position: absolute;
+    left: 12px;
+    bottom: -10px;
+    height: 20px;
+    background-color: var(--input-err-background);
+    color: var(--color-white);
+    line-height: 20px;
+    padding: 0px 8px;
+}
+.input__field .input__value.input--error {
+    border: 1px solid var(--input-error-border) !important;
+}

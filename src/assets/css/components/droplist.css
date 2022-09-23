@@ -1,0 +1,9 @@
+.droplist__data .combobox__item {
+    white-space: nowrap;
+}
+.droplist__data {
+    width: 128px;
+    height: 98px;
+    border-radius: 2px;
+    overflow: hidden;
+}
