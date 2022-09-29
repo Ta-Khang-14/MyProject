@@ -1,0 +1,17 @@
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\bin\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.deps.json
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\bin\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\bin\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.pdb
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\bin\Debug\net6.0\MISA.Web08.QTKD.Common.Khang.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\bin\Debug\net6.0\MISA.Web08.QTKD.DL.Khang.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\bin\Debug\net6.0\MISA.Web08.QTKD.Common.Khang.pdb
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\bin\Debug\net6.0\MISA.Web08.QTKD.DL.Khang.pdb
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.csproj.AssemblyReference.cache
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.AssemblyInfoInputs.cache
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.AssemblyInfo.cs
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.csproj.CoreCompileInputs.cache
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.csproj.CopyComplete
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\refint\MISA.WEB08.QTKD.BL.Khang.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.pdb
+D:\Dot Net\MISA.Web08.QTKD\MISA.WEB08.QTKD.BL.Khang\obj\Debug\net6.0\ref\MISA.WEB08.QTKD.BL.Khang.dll

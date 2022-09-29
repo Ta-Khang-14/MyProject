@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "MISA.Web08.QTKD.Common.Khang/1.0.0": {
+        "runtime": {
+          "MISA.Web08.QTKD.Common.Khang.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MISA.Web08.QTKD.Common.Khang/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
