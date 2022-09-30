@@ -9,10 +9,6 @@
         public Boolean IsSuccess { get; set; }
 
         /// <summary>
-        /// Dữ liệu trả về nếu thành công
-        /// </summary>
-
-        /// <summary>
         /// Đối tượng thể hiện các lỗi
         /// </summary>
         public ErrorResult? ErrorResult { get; set; }

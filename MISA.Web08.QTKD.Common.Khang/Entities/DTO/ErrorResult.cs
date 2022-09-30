@@ -48,6 +48,12 @@
 
         #region Static Method
 
+        public static ErrorResult Generate500Error(string httpContext)
+        {
+            return new ErrorResult(
+                QTKDErrorCode.Exception, Resource.DevMsg_Exception, Resource.UserMsg_Exception, Resource.MoreInfo_Exception, httpContext
+            );
+        }
 
         #endregion
     }

@@ -35,7 +35,11 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         public IActionResult EmployeesFilter([FromQuery] string? keyword, [FromQuery] string? sort, [FromQuery] int? offset, [FromQuery] int? limit)
         {
             var data = _employeeBL.EmployeesFilter(keyword, sort, offset, limit);
-            return StatusCode(StatusCodes.Status200OK, data);
+            if (data != null)
+            {
+                return StatusCode(StatusCodes.Status200OK, data);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
         }
 
         /// <summary>
@@ -53,7 +57,11 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
             if (rs.IsSuccess)
             {
                 var data = _employeeBL.InsertEmployee(employee);
-                return StatusCode(StatusCodes.Status201Created, data);
+                if (data != Guid.Empty)
+                {
+                    return StatusCode(StatusCodes.Status201Created, data);
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
             }
             else
             {
@@ -77,7 +85,11 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
             if (rs.IsSuccess)
             {
                 var data = _employeeBL.UpdateEmployee(employeeID, employee);
-                return StatusCode(StatusCodes.Status201Created, data);
+                if (data != Guid.Empty)
+                {
+                    return StatusCode(StatusCodes.Status201Created, data);
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
             }
             else
             {
@@ -96,7 +108,11 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         public IActionResult DeleteEmployee([FromRoute] Guid employeeID)
         {
             var data = _employeeBL.DeleteEmployee(employeeID);
-            return StatusCode(StatusCodes.Status201Created, data);
+            if (data != Guid.Empty)
+            {
+                return StatusCode(StatusCodes.Status201Created, data);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
         }
         #endregion
     }

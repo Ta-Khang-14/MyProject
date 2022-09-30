@@ -38,16 +38,14 @@ namespace MISA.Web08.QTKD.DL.Khang
                     }
                     else
                     {
-                        return employeeID;
-
+                        return Guid.Empty;
                     }
                 }
 
             }
             catch (Exception)
             {
-
-                throw;
+                return Guid.Empty;
             }
         }
 
@@ -113,8 +111,7 @@ namespace MISA.Web08.QTKD.DL.Khang
             }
             catch (Exception)
             {
-
-                throw;
+                return null;
             }
         }
 
@@ -126,49 +123,55 @@ namespace MISA.Web08.QTKD.DL.Khang
         /// Created by: TVKhang(29/09/22)
         public Guid InsertEmployee(Employee employee)
         {
-
-            using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
+            try
             {
-                //khai báo store proceduce
-                string storedProceduceName = "Proc_employee_Create";
-
-                //chuẩn bị tham số đầu vào
-                var employeeID = Guid.NewGuid();
-                var parameters = new DynamicParameters();
-                parameters.Add("v_EmployeeID", employeeID);
-                parameters.Add("v_EmployeeCode", employee.EmployeeCode);
-                parameters.Add("v_EmployeeName  ", employee.EmployeeName);
-                parameters.Add("v_TypeOfCustomer", employee.TypeOfCustomer);
-                parameters.Add("v_DateOfBirth", employee.DateOfBirth);
-                parameters.Add("v_Gender", employee.Gender);
-                parameters.Add("v_IdentityNumber", employee.IdentityNumber);
-                parameters.Add("v_DepartmentID", employee.DepartmentID);
-                parameters.Add("v_DepartmentName", employee.DepartmentName);
-                parameters.Add("v_IdentityPlace", employee.IdentityPlace);
-                parameters.Add("v_IdentityDate", employee.IdentityDate);
-                parameters.Add("v_EmployeeAddress", employee.EmployeeAddress);
-                parameters.Add("v_PhoneNumber", employee.PhoneNumber);
-                parameters.Add("v_LandlineNumber", employee.LandlineNumber);
-                parameters.Add("v_Email", employee.Email);
-                parameters.Add("v_BankName", employee.BankName);
-                parameters.Add("v_BankNumber", employee.BankNumber);
-                parameters.Add("v_BankBranch", employee.BankBranch);
-                parameters.Add("v_PositionName", employee.PositionName);
-                parameters.Add("v_CreatedBy", "TVKHANG");
-                parameters.Add("v_ModifiedBy", "TVKHANG");
-
-                //Thực hiện gọi vào db để chạy procedure
-                var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-
-                // TH: Thành công
-                if (numberOfAffectedRows > 0)
+                using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
                 {
-                    return employeeID;
+                    //khai báo store proceduce
+                    string storedProceduceName = "Proc_employee_Create";
+
+                    //chuẩn bị tham số đầu vào
+                    var employeeID = Guid.NewGuid();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("v_EmployeeID", employeeID);
+                    parameters.Add("v_EmployeeCode", employee.EmployeeCode);
+                    parameters.Add("v_EmployeeName  ", employee.EmployeeName);
+                    parameters.Add("v_TypeOfCustomer", employee.TypeOfCustomer);
+                    parameters.Add("v_DateOfBirth", employee.DateOfBirth);
+                    parameters.Add("v_Gender", employee.Gender);
+                    parameters.Add("v_IdentityNumber", employee.IdentityNumber);
+                    parameters.Add("v_DepartmentID", employee.DepartmentID);
+                    parameters.Add("v_DepartmentName", employee.DepartmentName);
+                    parameters.Add("v_IdentityPlace", employee.IdentityPlace);
+                    parameters.Add("v_IdentityDate", employee.IdentityDate);
+                    parameters.Add("v_EmployeeAddress", employee.EmployeeAddress);
+                    parameters.Add("v_PhoneNumber", employee.PhoneNumber);
+                    parameters.Add("v_LandlineNumber", employee.LandlineNumber);
+                    parameters.Add("v_Email", employee.Email);
+                    parameters.Add("v_BankName", employee.BankName);
+                    parameters.Add("v_BankNumber", employee.BankNumber);
+                    parameters.Add("v_BankBranch", employee.BankBranch);
+                    parameters.Add("v_PositionName", employee.PositionName);
+                    parameters.Add("v_CreatedBy", "TVKHANG");
+                    parameters.Add("v_ModifiedBy", "TVKHANG");
+
+                    //Thực hiện gọi vào db để chạy procedure
+                    var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+                    // TH: Thành công
+                    if (numberOfAffectedRows > 0)
+                    {
+                        return employeeID;
+                    }
+                    else  //TH2: Thất bại
+                    {
+                        return Guid.Empty;
+                    }
                 }
-                else  //TH2: Thất bại
-                {
-                    return employeeID;
-                }
+            }
+            catch (Exception)
+            {
+                return Guid.Empty;
             }
         }
 
@@ -220,14 +223,13 @@ namespace MISA.Web08.QTKD.DL.Khang
                     }
                     else  //TH2: Thất bại
                     {
-                        return employeeID;
+                        return Guid.Empty;
                     }
                 }
             }
             catch (Exception)
             {
-
-                throw;
+                return Guid.Empty;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MISA.Web08.QTKD.Common.Khang;
 using MISA.WEB08.QTKD.BL.Khang;
 
 namespace MISA.Web08.QTKD.API.Khang
@@ -29,15 +30,13 @@ namespace MISA.Web08.QTKD.API.Khang
         [Route("")]
         public IActionResult Records()
         {
-            try
+            var data = _baseBL.Records();
+            if (data != null)
             {
-                var data = _baseBL.Records();
                 return StatusCode(StatusCodes.Status200OK, data);
             }
-            catch (Exception err)
-            {
-                return StatusCode(StatusCodes.Status422UnprocessableEntity, err);
-            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
         }
 
         /// <summary>
@@ -49,15 +48,15 @@ namespace MISA.Web08.QTKD.API.Khang
         [Route("{recordID}")]
         public IActionResult Record([FromRoute] Guid recordID)
         {
-            try
+            var data = _baseBL.Record(recordID);
+
+            if (data != null)
             {
-                var data = _baseBL.Record(recordID);
                 return StatusCode(StatusCodes.Status200OK, data);
             }
-            catch (Exception err)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, err);
-            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+
         }
         #endregion
 

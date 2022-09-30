@@ -41,7 +41,7 @@ namespace MISA.Web08.QTKD.DL.Khang
             {
 
                 Console.WriteLine(err);
-                throw;
+                return null;
             }
         }
 
@@ -60,7 +60,7 @@ namespace MISA.Web08.QTKD.DL.Khang
 
                 // Chuẩn bị tham số cho đầu vào cho câu lệnh trên
                 var parameters = new DynamicParameters();
-                parameters.Add("v_TableName", "employee");
+                parameters.Add("v_TableName", typeof(T).Name);
                 parameters.Add("v_ID", typeof(T).Name + "ID = '" + recordID + "'");
 
                 // Thực hiện lệnh gọi vào DB
@@ -73,7 +73,7 @@ namespace MISA.Web08.QTKD.DL.Khang
             catch (Exception err)
             {
                 Console.WriteLine(err);
-                throw;
+                return default(T);
             }
         }
     }

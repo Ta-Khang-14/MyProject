@@ -57,7 +57,7 @@ namespace MISA.Web08.QTKD.Common.Khang
                 var primaryKeyAttr = (IsEmail?)Attribute.GetCustomAttribute(property, typeof(IsEmail));
                 string pattern = @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z";
 
-                if (primaryKeyAttr != null && Regex.IsMatch(propertyValue?.ToString(), pattern))
+                if (primaryKeyAttr != null && !Regex.IsMatch(propertyValue?.ToString(), pattern))
                 {
                     return primaryKeyAttr.ErrorMessage;
                 }
