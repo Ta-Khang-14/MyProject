@@ -4,7 +4,7 @@ using MISA.WEB08.QTKD.BL.Khang;
 
 namespace MISA.Web08.QTKD.API.Khang.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class DepartmentsController : BasesController<Department>
     {

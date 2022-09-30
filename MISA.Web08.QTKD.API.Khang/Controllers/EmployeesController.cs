@@ -4,7 +4,7 @@ using MISA.WEB08.QTKD.BL.Khang;
 
 namespace MISA.Web08.QTKD.API.Khang.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class EmployeesController : BasesController<Employee>
     {
@@ -32,7 +32,7 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         /// Created by: TVKhang(29/09/22)
         [HttpGet]
         [Route("filter")]
-        public IActionResult EmployeesFilter(string? keyword, string? sort, int? offset, int? limit)
+        public IActionResult EmployeesFilter([FromQuery] string? keyword, [FromQuery] string? sort, [FromQuery] int? offset, [FromQuery] int? limit)
         {
             var data = _employeeBL.EmployeesFilter(keyword, sort, offset, limit);
             return StatusCode(StatusCodes.Status200OK, data);
@@ -46,10 +46,19 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         /// Created by: TVKhang(29/09/22)
         [HttpPost]
         [Route("")]
-        public IActionResult CreateEmployee(Employee employee)
+        public IActionResult CreateEmployee([FromBody] Employee employee)
         {
-            var data = _employeeBL.InsertEmployee(employee);
-            return StatusCode(StatusCodes.Status201Created, data);
+            ResponseHandle rs = ValidateData<Employee>.ValidateRequestData(employee, HttpContext.TraceIdentifier);
+
+            if (rs.IsSuccess)
+            {
+                var data = _employeeBL.InsertEmployee(employee);
+                return StatusCode(StatusCodes.Status201Created, data);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, rs.ErrorResult);
+            }
         }
 
 
@@ -60,11 +69,20 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         /// <returns>Mã nhân viên đã được cập nhật</returns>
         /// Created by: TVKhang(29/09/22)
         [HttpPut]
-        [Route("")]
-        public IActionResult UpdateEmployee(Guid employeeID, Employee employee)
+        [Route("{employeeID}")]
+        public IActionResult UpdateEmployee([FromRoute] Guid employeeID, [FromBody] Employee employee)
         {
-            var data = _employeeBL.UpdateEmployee(employeeID, employee);
-            return StatusCode(StatusCodes.Status201Created, data);
+            ResponseHandle rs = ValidateData<Employee>.ValidateRequestData(employee, HttpContext.TraceIdentifier);
+
+            if (rs.IsSuccess)
+            {
+                var data = _employeeBL.UpdateEmployee(employeeID, employee);
+                return StatusCode(StatusCodes.Status201Created, data);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, rs.ErrorResult);
+            }
         }
 
         /// <summary>
@@ -74,8 +92,8 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         /// <returns>Mã nhân viên đã xóa</returns>
         /// Created by: TVKhang(29/09/22)
         [HttpDelete]
-        [Route("")]
-        public IActionResult DeleteEmployee(Guid employeeID)
+        [Route("{employeeID}")]
+        public IActionResult DeleteEmployee([FromRoute] Guid employeeID)
         {
             var data = _employeeBL.DeleteEmployee(employeeID);
             return StatusCode(StatusCodes.Status201Created, data);

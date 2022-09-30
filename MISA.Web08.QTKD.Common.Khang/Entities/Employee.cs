@@ -9,7 +9,7 @@ namespace MISA.Web08.QTKD.Common.Khang
         /// <summary>
         /// ID của nhân viên
         /// </summary>
-        [PrimaryKey]
+        [PrimaryKey("ID nhân viên không được để trống")]
         public Guid EmployeeID { get; set; }
 
         /// <summary>
@@ -87,6 +87,7 @@ namespace MISA.Web08.QTKD.Common.Khang
         /// <summary>
         /// Email cá nhân nhân viên
         /// </summary>
+        [IsEmail("Email sai định dạng")]
         public string? Email { get; set; }
 
         /// <summary>

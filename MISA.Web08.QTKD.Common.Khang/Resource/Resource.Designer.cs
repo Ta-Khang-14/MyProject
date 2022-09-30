@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MISA.Web08.QTKD.Common.Khang.Resource {
+namespace MISA.Web08.QTKD.Common.Khang {
     using System;
     
     
@@ -63,18 +63,9 @@ namespace MISA.Web08.QTKD.Common.Khang.Resource {
         /// <summary>
         ///   Looks up a localized string similar to Delete an employee failed.
         /// </summary>
-        public static string DevMsg_Employee_DeleteFailed {
+        public static string DevMsg_DeleteEmployeeFailed {
             get {
-                return ResourceManager.GetString("DevMsg_Employee_DeleteFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insert a new employee failed.
-        /// </summary>
-        public static string DevMsg_Employee_InsertFailed {
-            get {
-                return ResourceManager.GetString("DevMsg_Employee_InsertFailed", resourceCulture);
+                return ResourceManager.GetString("DevMsg_DeleteEmployeeFailed", resourceCulture);
             }
         }
         
@@ -84,6 +75,15 @@ namespace MISA.Web08.QTKD.Common.Khang.Resource {
         public static string DevMsg_Exception {
             get {
                 return ResourceManager.GetString("DevMsg_Exception", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert a new employee failed.
+        /// </summary>
+        public static string DevMsg_InsertEmployeeFailed {
+            get {
+                return ResourceManager.GetString("DevMsg_InsertEmployeeFailed", resourceCulture);
             }
         }
         
@@ -99,36 +99,27 @@ namespace MISA.Web08.QTKD.Common.Khang.Resource {
         /// <summary>
         ///   Looks up a localized string similar to https://openapi.misa.com.vn/errorcode/e001.
         /// </summary>
-        public static string MoreInfor_Employee_DeleteFailed {
+        public static string MoreInfor_DeleteEmployeeFailed {
             get {
-                return ResourceManager.GetString("MoreInfor_Employee_DeleteFailed", resourceCulture);
+                return ResourceManager.GetString("MoreInfor_DeleteEmployeeFailed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to https://openapi.misa.com.vn/errorcode/e001.
         /// </summary>
-        public static string MoreInfor_Employee_InsertFailed {
+        public static string MoreInfor_InsertEmployeeFailed {
             get {
-                return ResourceManager.GetString("MoreInfor_Employee_InsertFailed", resourceCulture);
+                return ResourceManager.GetString("MoreInfor_InsertEmployeeFailed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Xóa nhân viên thất bại!.
         /// </summary>
-        public static string UserMsg_Employee_DeleteFailed {
+        public static string UserMsg__DeleteEmployeeFailed {
             get {
-                return ResourceManager.GetString("UserMsg_Employee_DeleteFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Thêm mới nhân viên thất bại!.
-        /// </summary>
-        public static string UserMsg_Employee_InsertFailed {
-            get {
-                return ResourceManager.GetString("UserMsg_Employee_InsertFailed", resourceCulture);
+                return ResourceManager.GetString("UserMsg__DeleteEmployeeFailed", resourceCulture);
             }
         }
         
@@ -138,6 +129,15 @@ namespace MISA.Web08.QTKD.Common.Khang.Resource {
         public static string UserMsg_Exception {
             get {
                 return ResourceManager.GetString("UserMsg_Exception", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thêm mới nhân viên thất bại!.
+        /// </summary>
+        public static string UserMsg_InsertEmployeeFailed {
+            get {
+                return ResourceManager.GetString("UserMsg_InsertEmployeeFailed", resourceCulture);
             }
         }
     }

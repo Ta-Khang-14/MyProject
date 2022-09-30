@@ -117,23 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DevMsg_Employee_DeleteFailed" xml:space="preserve">
+  <data name="DevMsg_DeleteEmployeeFailed" xml:space="preserve">
     <value>Delete an employee failed</value>
     <comment>Thông báo cho Dev xóa 1 nhân viên thất bại</comment>
-  </data>
-  <data name="DevMsg_Employee_InsertFailed" xml:space="preserve">
-    <value>Insert a new employee failed</value>
-    <comment>Thông báo cho Dev thêm mới 1 nhân viên thất bại</comment>
   </data>
   <data name="DevMsg_Exception" xml:space="preserve">
     <value>An unknown exception</value>
     <comment>Thông báo cho Dev đọc khi gặp 1 lỗi không xác định</comment>
   </data>
-  <data name="MoreInfor_Employee_DeleteFailed" xml:space="preserve">
+  <data name="DevMsg_InsertEmployeeFailed" xml:space="preserve">
+    <value>Insert a new employee failed</value>
+    <comment>Thông báo cho Dev thêm mới 1 nhân viên thất bại</comment>
+  </data>
+  <data name="MoreInfor_DeleteEmployeeFailed" xml:space="preserve">
     <value>https://openapi.misa.com.vn/errorcode/e001</value>
     <comment>Đường dẫn mô tả tới lỗi xóa nhân viên thất bại</comment>
   </data>
-  <data name="MoreInfor_Employee_InsertFailed" xml:space="preserve">
+  <data name="MoreInfor_InsertEmployeeFailed" xml:space="preserve">
     <value>https://openapi.misa.com.vn/errorcode/e001</value>
     <comment>Đường dẫn tới mô tả lỗi thêm mới nhân viên thất bại</comment>
   </data>
@@ -141,16 +141,16 @@
     <value>https://openapi.misa.com.vn/errorcode/e001</value>
     <comment>Đường dẫn tới mô tả lỗi không xác định</comment>
   </data>
-  <data name="UserMsg_Employee_DeleteFailed" xml:space="preserve">
-    <value>Xóa nhân viên thất bại!</value>
-    <comment>Thông báo cho User xóa 1 nhân viên thất bại</comment>
-  </data>
-  <data name="UserMsg_Employee_InsertFailed" xml:space="preserve">
-    <value>Thêm mới nhân viên thất bại!</value>
-    <comment>Thông báo cho User thêm mới 1 nhân viên thất bại</comment>
-  </data>
   <data name="UserMsg_Exception" xml:space="preserve">
     <value>Có lỗi không xác định xảy ra. Vui lòng liên lạc lại với MISA!</value>
     <comment>Thông báo cho User đọc khi gặp 1 lỗi không xác định</comment>
+  </data>
+  <data name="UserMsg_InsertEmployeeFailed" xml:space="preserve">
+    <value>Thêm mới nhân viên thất bại!</value>
+    <comment>Thông báo cho User thêm mới 1 nhân viên thất bại</comment>
+  </data>
+  <data name="UserMsg__DeleteEmployeeFailed" xml:space="preserve">
+    <value>Xóa nhân viên thất bại!</value>
+    <comment>Thông báo cho User xóa 1 nhân viên thất bại</comment>
   </data>
 </root>

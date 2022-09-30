@@ -8,7 +8,7 @@
         Exception = 1,
 
         /// <summary>
-        /// Trùng mã nhân viên
+        /// Trùng mã
         /// </summary>
         DupplicateCode = 2,
 
@@ -21,5 +21,15 @@
         /// ID sai định dạng
         /// </summary>
         InvalidID = 4,
+
+        /// <summary>
+        /// Không được để trống
+        /// </summary>
+        NotNullOrEmpty = 5,
+
+        /// <summary>
+        /// Không phải là email
+        /// </summary>
+        EmailInvalid = 5,
     }
 }
