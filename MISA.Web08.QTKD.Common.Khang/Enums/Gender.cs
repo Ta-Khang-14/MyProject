@@ -1,4 +1,6 @@
-﻿namespace MISA.Web08.QTKD.Common.Khang
+﻿using System.ComponentModel;
+
+namespace MISA.Web08.QTKD.Common.Khang
 {
     /// <summary>
     /// Giới tính
@@ -8,16 +10,19 @@
         /// <summary>
         /// Nam
         /// </summary>
+        [Description("Nam")]
         Male = 0,
 
         /// <summary>
         /// Nữ
         /// </summary>
+        [Description("Nữ")]
         Female = 1,
 
         /// <summary>
         /// Khác
         /// </summary>
+        [Description("Khác")]
         Other = 2
     }
 }

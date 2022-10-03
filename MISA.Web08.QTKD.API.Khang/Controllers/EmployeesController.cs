@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MISA.Web08.QTKD.Common.Khang;
 using MISA.WEB08.QTKD.BL.Khang;
+using System.Text;
 
 namespace MISA.Web08.QTKD.API.Khang.Controllers
 {
@@ -32,7 +33,7 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         /// Created by: TVKhang(29/09/22)
         [HttpGet]
         [Route("filter")]
-        public IActionResult EmployeesFilter([FromQuery] string? keyword, [FromQuery] string? sort, [FromQuery] int? offset, [FromQuery] int? limit)
+        public IActionResult Employees([FromQuery] string? keyword, [FromQuery] string? sort, [FromQuery] int? offset, [FromQuery] int? limit)
         {
             var data = _employeeBL.EmployeesFilter(keyword, sort, offset, limit);
             if (data != null)
@@ -43,6 +44,78 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("exportEmployees")]
+        public IActionResult EmployeeExportFile()
+        {
+            try
+            {
+                List<Employee> ListEmployee = new List<Employee>();
+                ListEmployee = _employeeBL.Records().Data;
+
+                StringBuilder str = new StringBuilder();
+                str.Append("<table border=`" + "1px" + "`b>");
+                str.Append("<tr>");
+                str.Append("<td><b><font face=Arial Narrow size=3>STT</font></b></td>");
+                str.Append("<td><b><font face=Arial Narrow size=3>Mã nhân viên</font></b></td>");
+                str.Append("<td><b><font face=Arial Narrow size=3>Họ tên nhân viên</font></b></td>");
+                str.Append("<td><b><font face=Arial Narrow size=3>Giới tính</font></b></td>");
+                str.Append("<td><b><font face=Arial Narrow size=3>Ngày sinh</font></b></td>");
+                str.Append("<td><b><font face=Arial Narrow size=3>Chức danh</font></b></td>");
+                str.Append("<td><b><font face=Arial Narrow size=3>Tên đơn vị</font></b></td>");
+                str.Append("<td><b><font face=Arial Narrow size=3>Số tài khoản</font></b></td>");
+                str.Append("<td><b><font face=Arial Narrow size=3>Tên ngân hàng</font></b></td>");
+                str.Append("</tr>");
+
+                int index = 1;
+                foreach (Employee val in ListEmployee)
+                {
+                    string gender = "";
+                    switch (val.Gender)
+                    {
+                        case Gender.Male:
+                            gender = "Nam";
+                            break;
+                        case Gender.Female:
+                            gender = "Nữ";
+                            break;
+                        case Gender.Other:
+                            gender = "Khác";
+                            break;
+                    }
+
+                    str.Append("<tr>");
+                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + index.ToString() + "</font></td>");
+                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.EmployeeCode.ToString() + "</font></td>");
+                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.EmployeeName.ToString() + "</font></td>");
+                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + gender + "</font></td>");
+                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.DateOfBirth?.ToString() + "</font></td>");
+                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.PositionName?.ToString() + "</font></td>");
+                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.DepartmentName?.ToString() + "</font></td>");
+                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.BankNumber?.ToString() + "</font></td>");
+                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.BankName?.ToString() + "</font></td>");
+                    str.Append("</tr>");
+                    index++;
+                }
+
+
+                str.Append("</table>");
+                HttpContext.Response.Headers.Add("content-disposition", "attachment; filename=Danh_Sach_Nhan_Vien.xls");
+                this.Response.ContentType = "application/vnd.ms-excel";
+                byte[] temp = System.Text.Encoding.UTF8.GetBytes(str.ToString());
+
+                return File(temp, "application/vnd.ms-excel");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+            }
+        }
+
+        /// <summary>
         /// Thêm mới 1 nhân viên
         /// </summary>
         /// <param name="employee">Thông tin nhân viên cần thêm mới</param>
@@ -50,18 +123,22 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         /// Created by: TVKhang(29/09/22)
         [HttpPost]
         [Route("")]
-        public IActionResult CreateEmployee([FromBody] Employee employee)
+        public IActionResult Employee([FromBody] Employee employee)
         {
             ResponseHandle rs = ValidateData<Employee>.ValidateRequestData(employee, HttpContext.TraceIdentifier);
 
             if (rs.IsSuccess)
             {
-                var data = _employeeBL.InsertEmployee(employee);
-                if (data != Guid.Empty)
+                // Kiểm tra trùng mã nhân viên
+                if (true)
                 {
-                    return StatusCode(StatusCodes.Status201Created, data);
+                    var data = _employeeBL.InsertEmployee(employee);
+                    if (data != Guid.Empty)
+                    {
+                        return StatusCode(StatusCodes.Status201Created, data);
+                    }
+                    return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
             }
             else
             {
@@ -78,7 +155,7 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         /// Created by: TVKhang(29/09/22)
         [HttpPut]
         [Route("{employeeID}")]
-        public IActionResult UpdateEmployee([FromRoute] Guid employeeID, [FromBody] Employee employee)
+        public IActionResult Employee([FromRoute] Guid employeeID, [FromBody] Employee employee)
         {
             ResponseHandle rs = ValidateData<Employee>.ValidateRequestData(employee, HttpContext.TraceIdentifier);
 
@@ -105,7 +182,7 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         /// Created by: TVKhang(29/09/22)
         [HttpDelete]
         [Route("{employeeID}")]
-        public IActionResult DeleteEmployee([FromRoute] Guid employeeID)
+        public IActionResult Employee([FromRoute] Guid employeeID)
         {
             var data = _employeeBL.DeleteEmployee(employeeID);
             if (data != Guid.Empty)
