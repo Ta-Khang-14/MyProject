@@ -8,6 +8,7 @@
                         type="checkbox"
                         name=""
                         id=""
+                        @click="selectAllEmployee"
                     />
                 </th>
                 <th class="text--left">mã nhân viên</th>
@@ -26,25 +27,40 @@
         <tbody>
             <tr
                 class="table__row--bold"
-                v-for="(employee, index) in findEmployees"
+                v-for="(employee, index) in employees"
                 :key="index"
-                @dblclick="showFormEditEmployee(employee.EmployeeId, 1)"
+                @dblclick="
+                    showFormEditEmployee(employee.employeeID, formEnum.Edit)
+                "
             >
                 <td class="text--center" @dblclick.stop="true">
-                    <input type="checkbox" class="input--selected" />
+                    <input
+                        :checked="isCheckedAll"
+                        type="checkbox"
+                        class="input--selected"
+                        @input="selectEmployee(employee)"
+                    />
                 </td>
-                <td class="text--left">{{ employee.EmployeeCode || "" }}</td>
-                <td class="text--left">{{ employee.FullName || "" }}</td>
-                <td class="text--left">{{ employee.Gender || "" }}</td>
+                <td class="text--left">{{ employee.employeeCode || "" }}</td>
+                <td class="text--left">{{ employee.employeeName || "" }}</td>
+                <td class="text--left">{{ gender[employee.gender] || "" }}</td>
                 <td class="text--right">
-                    {{ formatTime(employee.DateOfBirth) || "" }}
+                    {{ formatTime(employee.dateOfBirth) || "" }}
                 </td>
-                <td class="text--left">{{ employee.IdentityNumber || "" }}</td>
-                <td class="text--left">{{ employee.PositionName || "" }}</td>
-                <td class="text--left">{{ employee.DepartmentName || "" }}</td>
-                <td class="text--left">{{}}</td>
-                <td class="text--left">{{}}</td>
-                <td class="text--left">{{}}</td>
+                <td class="text--left">{{ employee.identityNumber || "" }}</td>
+                <td class="text--left">{{ employee.positionName || "" }}</td>
+                <td class="text--left">
+                    {{ employee.departmentID ? employee.departmentName : "" }}
+                </td>
+                <td class="text--left">
+                    {{ employee.bankNumber ? employee.bankNumber : "" }}
+                </td>
+                <td class="text--left">
+                    {{ employee.bankName ? employee.bankName : "" }}
+                </td>
+                <td class="text--left">
+                    {{ employee.bankBranch ? employee.bankBranch : "" }}
+                </td>
 
                 <td class="text--center" @dblclick.stop="true">
                     <div class="table__item--option">
@@ -55,8 +71,8 @@
                                 clickBtnEdit(
                                     $event,
                                     index,
-                                    employee.EmployeeId,
-                                    employee.EmployeeCode
+                                    employee.employeeID,
+                                    employee.employeeCode
                                 )
                             "
                         >
@@ -79,6 +95,7 @@
 </template>
 
 <script>
+import EnumMisa from "@/ultis/enum.js";
 export default {
     props: {
         employees: {
@@ -95,6 +112,16 @@ export default {
             indexSelected: "",
             isShowEditCbx: false,
             positionDropListData: 0,
+            formEnum: {
+                ...EnumMisa.FormMode,
+            },
+            gender: {
+                0: "Nam",
+                1: "Nữ",
+                2: "Khác",
+            },
+            isCheckedAll: false,
+            listSelectedEmployee: [],
         };
     },
     methods: {
@@ -139,16 +166,38 @@ export default {
                 mode,
             });
         },
-    },
-    computed: {
-        // Xử lý dữ liệu trước khi xuất ra màn hình
-        // Author: TVKhang 12/09/22
-        findEmployees() {
-            let key = this.filterEmployee.toUpperCase();
 
-            return this.employees.filter((e) =>
-                e.EmployeeCode.toUpperCase().includes(key)
-            );
+        // Xử lý sự kiện click vào input checkbox nhân viên
+        // Author: TVKhang 12/09/22
+        selectEmployee(data) {
+            if (!this.listSelectedEmployee.includes(data.employeeID)) {
+                this.listSelectedEmployee.push(data.employeeID);
+            } else {
+                this.listSelectedEmployee.splice(
+                    this.listSelectedEmployee.indexOf(this.employeeID) + 1,
+                    1
+                );
+            }
+        },
+
+        // Xử lý sự kiện click vào input checkbox tổng
+        // Author: TVKhang 12/09/22
+        selectAllEmployee() {
+            this.isCheckedAll = !this.isCheckedAll;
+
+            if (
+                this.listSelectedEmployee.length != this.employees.length ||
+                (this.listSelectedEmployee.length == this.employees.length &&
+                    this.isCheckedAll)
+            ) {
+                this.employees.forEach((e) => {
+                    if (!this.listSelectedEmployee.includes(e.employeeID))
+                        this.listSelectedEmployee.push(e.employeeID);
+                });
+            } else {
+                this.listSelectedEmployee = [];
+            }
+            console.log(this.listSelectedEmployee);
         },
     },
 };

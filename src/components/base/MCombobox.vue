@@ -69,8 +69,10 @@ export default {
         selectItem(value, index) {
             Object.assign(this.currentItem, value);
             this.selectedIndex = index;
-            this.textInput = this.currentItem.DepartmentName;
+            this.textInput = this.currentItem[this.propName];
             this.isShowDataList = false;
+
+            this.$emit("changeDataCbx", this.currentItem[this.propData]);
         },
 
         // Xử lý sự kiện thao tác với bàn phím
@@ -84,7 +86,7 @@ export default {
                         ? this.selectedIndex + 1
                         : 0;
                 this.currentItem = { ...this.listData[this.selectedIndex] };
-                this.textInput = this.currentItem.DepartmentName;
+                this.textInput = this.currentItem[this.propName];
             }
 
             // Ấn mũi tên lên
@@ -95,12 +97,13 @@ export default {
                         ? this.selectedIndex - 1
                         : this.listData.length - 1;
                 this.currentItem = { ...this.listData[this.selectedIndex] };
-                this.textInput = this.currentItem.DepartmentName;
+                this.textInput = this.currentItem[this.propName];
             }
 
             // Ấn Enter
             if (event.keyCode == EnumMisa.KeyCode.Enter) {
                 this.isShowDataList = false;
+                this.$emit("changeDataCbx", this.currentItem[this.propData]);
             }
         },
         // Xử lý sự kiện nhập dữ liệu vào input
@@ -108,11 +111,25 @@ export default {
         filterData() {
             this.isShowDataList = true;
             this.listDataFilter = this.listData.filter((e) =>
-                e.DepartmentName.toUpperCase().includes(
-                    this.textInput.toUpperCase()
-                )
+                e[this.propName]
+                    .toUpperCase()
+                    .includes(this.textInput.toUpperCase())
             );
         },
+    },
+    created() {
+        this.listDataFilter = [...this.listData];
+
+        if (this.listDataFilter.length) {
+            // Chọn giá trị của combobox
+            this.listDataFilter.forEach((e, i) => {
+                if (e[this.propData] == this.selectedId) {
+                    Object.assign(this.currentItem, e);
+                    this.textInput = this.currentItem[this.propName];
+                    this.selectedIndex = i;
+                }
+            });
+        }
     },
     watch: {
         listData() {
@@ -120,9 +137,9 @@ export default {
 
             // Chọn giá trị của combobox
             this.listDataFilter.forEach((e, i) => {
-                if (e.DepartmentId == this.selectedId) {
+                if (e[this.propData] == this.selectedId) {
                     Object.assign(this.currentItem, e);
-                    this.textInput = this.currentItem.DepartmentName;
+                    this.textInput = this.currentItem[this.propName];
                     this.selectedIndex = i;
                 }
             });

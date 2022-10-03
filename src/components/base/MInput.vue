@@ -9,6 +9,7 @@
         v-model="value"
         :class="{ 'input--error': hasError }"
         @input="eventInput"
+        ref="input"
     />
     <div v-if="hasError" class="input__msg">{{ msg }}</div>
 </template>
@@ -35,10 +36,6 @@ export default {
         tabIndex: {
             type: String,
         },
-        isFocus: {
-            type: Boolean,
-            // default: false,
-        },
         defaultValue: {
             type: String,
             default: "",
@@ -53,6 +50,7 @@ export default {
             value: "",
             hasError: false,
             msg: "",
+            isFocus: false,
         };
     },
     methods: {
@@ -60,12 +58,20 @@ export default {
         // Author: TVKhang(20/09/22)
         eventInput() {
             this.hasError = false;
-            console.log("NHập");
+            this.msg = "";
+        },
+
+        /**
+         * Set auto focus cho input
+         * Author: TVKhang(27/09/22)
+         */
+        focus() {
+            this.$refs.input.focus();
         },
     },
     watch: {
         defaultValue() {
-            this.value = this.defaultValue;
+            this.value = this.defaultValue || "";
         },
     },
 };

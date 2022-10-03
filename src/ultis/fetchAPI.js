@@ -6,6 +6,7 @@ export default async function fetchData(api, method = "GET", jwt = "", body) {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
                 "X-Custom-Header": "header value",
+                "Access-Control-Allow-Origin": "*",
             },
             body: JSON.stringify(body),
         });

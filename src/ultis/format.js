@@ -1,16 +1,30 @@
 // Định dạng lại ngày tháng năm
 // Author: TVKhang(11/09/22)
-
 function formatTime(data) {
-    if (data) {
-        data = new Date(data);
-        let day = data.getDate();
-        let month = data.getMonth() + 1;
-        let year = data.getFullYear();
-        // let hour = data.getHours();
-        // let minute = data.getMinutes();
-        return `${day}/${month}/${year}`;
+    try {
+        if (data) {
+            data = new Date(data);
+            let day = data.getDate();
+            let month = data.getMonth() + 1;
+            let year = data.getFullYear();
+            // let hour = data.getHours();
+            // let minute = data.getMinutes();
+            return `${day}/${month}/${year}`;
+        }
+        return "";
+    } catch (err) {
+        console.log(err);
     }
-    return "";
 }
-export { formatTime };
+
+// Loại bỏ 1 số kí tự lạ trong chuỗi nhập vào
+// Author: TVKhang(25/09/22)
+function simpleFormatString(data) {
+    try {
+        return data.replaceAll(/'|;|%/g, "");
+    } catch (err) {
+        console.log(err);
+        return "";
+    }
+}
+export { formatTime, simpleFormatString };

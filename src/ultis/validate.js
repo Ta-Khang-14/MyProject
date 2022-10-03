@@ -1,7 +1,12 @@
 import EnumMisa from "./enum.js";
 
-// Xử lý validate dữ liệu
-// Author: TVKhang(20/09/2022)
+/**
+ * Xử lý validate dữ liệu
+ * Author: TVKhang(20/09/2022)
+ * @param {*} data dữ liệu cần validate
+ * @param {*} action kiểu validate
+ * @returns Object chứa thông tin lỗi
+ */
 function validate(data, action) {
     try {
         switch (action) {
@@ -9,8 +14,8 @@ function validate(data, action) {
                 return validateRequired(data);
             case EnumMisa.Validate.Email:
                 return validateEmail(data);
-            case EnumMisa.Validate.Phone:
-                return validatePhone(data);
+            case EnumMisa.Validate.EmployeeCode:
+                return validateEmployeeCode(data);
             case EnumMisa.Validate.StringUTF8:
                 return validateString(data);
             case EnumMisa.Validate.Number:
@@ -52,15 +57,11 @@ function validateEmail(data) {
     };
 }
 
-// Validate dữ liệu có phải là số điện thoại
-function validatePhone(data) {
+// Validate dữ liệu có phải là mã nhân viên
+function validateEmployeeCode(data) {
     data = data.trim();
     if (data != "") {
-        if (
-            !/^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/.test(
-                data
-            )
-        ) {
+        if (!/^NV-\d{8,}$/.test(data)) {
             return {
                 status: false,
                 msg: "Sai định dạng",
@@ -72,12 +73,12 @@ function validatePhone(data) {
     };
 }
 
-// Validate dữ liệu có phải là số điện thoại
+// Validate dữ liệu có phải là chuỗi ký tự hợp lệ
 function validateString(data) {
     data = data.trim();
     if (data != "") {
         if (
-            !/^[a-zA-Z0-9-,\s_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]+$/.test(
+            !/^[a-zA-Z0-9-,\s_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,255}$/.test(
                 data
             )
         ) {
@@ -97,7 +98,7 @@ function validateString(data) {
 function validateNumber(data) {
     data = data.trim();
     if (data != "") {
-        if (!/^[0-9]{1,}$/.test(data)) {
+        if (!/^[0-9]{0,255}$/.test(data)) {
             return {
                 status: false,
                 msg: "Sai định dạng",

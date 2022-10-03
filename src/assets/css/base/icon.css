@@ -72,7 +72,7 @@
 }
 .icon__arrowDown--black {
     background: url("../../Resource/img/Sprites.64af8f61.svg") no-repeat;
-    background-position: -564px -365px;
+    background-position: -564px -363px;
     width: 8px;
     height: 5px;
 }
@@ -87,6 +87,9 @@
 }
 .icon--refresh {
     background-position: -1096px -88px;
+}
+.icon--excel {
+    background-position: -1265px -88px;
 }
 .icon__arrowDown--bold {
     background: url("../../Resource/img/Sprites.64af8f61.svg") no-repeat;

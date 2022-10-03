@@ -1,5 +1,9 @@
 <template>
-    <div class="dialog isActive" id="form__employee--add">
+    <div
+        class="dialog isActive"
+        id="form__employee--add"
+        @keydown="handleEnventKeyDown($event)"
+    >
         <div class="dialog__form">
             <div class="dialog__header flex">
                 <div class="dialog__header--title flex">
@@ -28,18 +32,21 @@
                                 tabIndex="1"
                                 labelRequired="Mã"
                                 ref="EmployeeCode"
-                                :isFocus="true"
                                 placeholder="Nhập mã nhân viên"
-                                :defaultValue="employee.EmployeeCode || ''"
+                                :defaultValue="
+                                    employee ? employee.employeeCode : ''
+                                "
                             />
                         </div>
                         <div class="input__field cl--7">
                             <m-input
                                 tabIndex="2"
-                                ref="FullName"
+                                ref="EmployeeName"
                                 labelRequired="Tên nhân viên"
                                 placeholder="Nhập tên nhân viên"
-                                :defaultValue="employee.FullName || ''"
+                                :defaultValue="
+                                    employee ? employee.employeeName : ''
+                                "
                             />
                         </div>
                     </div>
@@ -51,7 +58,9 @@
                                 ref="DateOfBirth"
                                 type="date"
                                 :defaultValue="
-                                    formatTime(employee.DateOfBirth) || ''
+                                    formatTime(
+                                        employee ? employee.dateOfBirth : ''
+                                    ) || ''
                                 "
                             />
                         </div>
@@ -67,7 +76,9 @@
                                         name="gender"
                                         id="nam"
                                         :checked="
-                                            employee.Gender == gender.Male
+                                            employee
+                                                ? employee.gender == gender.Male
+                                                : false
                                         "
                                     />
                                     <label class="label__gender" for="nam"
@@ -83,7 +94,10 @@
                                         name="gender"
                                         id="nu"
                                         :checked="
-                                            employee.Gender == gender.Female
+                                            employee
+                                                ? employee.gender ==
+                                                  gender.Female
+                                                : false
                                         "
                                     />
                                     <label class="label__gender" for="nu"
@@ -99,7 +113,10 @@
                                         name="gender"
                                         id="khac"
                                         :checked="
-                                            employee.Gender == gender.Other
+                                            employee
+                                                ? employee.gender ==
+                                                  gender.Other
+                                                : false
                                         "
                                     />
                                     <label class="label__gender" for="khac"
@@ -117,9 +134,11 @@
                             <m-combobox
                                 tabIndex="3"
                                 :listData="deparments"
-                                :propName="'DepartmentName'"
-                                :propData="'DepartmentId'"
-                                :selectedId="employee.DepartmentId"
+                                :propName="'departmentName'"
+                                :propData="'departmentID'"
+                                :selectedId="
+                                    employee ? employee.departmentID : ''
+                                "
                                 ref="cbx_department"
                             />
                         </div>
@@ -132,7 +151,9 @@
                                 type="text"
                                 ref="IdentityNumber"
                                 placeholder="Nhập số CMND"
-                                :defaultValue="employee.IdentityNumber || ''"
+                                :defaultValue="
+                                    employee ? employee.identityNumber : ''
+                                "
                             />
                         </div>
                         <div class="input__field cl--6">
@@ -141,7 +162,11 @@
                                 ref="IdentityDate"
                                 tabIndex="10"
                                 type="date"
-                                :value="formatTime(employee.IdentityDate) || ''"
+                                :value="
+                                    formatTime(
+                                        employee ? employee.identityDate : ''
+                                    ) || ''
+                                "
                             />
                         </div>
                     </div>
@@ -151,11 +176,13 @@
                         <div class="input__field cl--12">
                             <m-input
                                 tabIndex="4"
-                                label="Địa chỉ"
+                                label="Chức danh"
                                 type="text"
-                                placeholder="Nhập địa chỉ"
-                                ref="Address"
-                                :defaultValue="employee.Address || ''"
+                                placeholder="Nhập tên chức danh"
+                                ref="PositionName"
+                                :defaultValue="
+                                    employee ? employee.positionName : ''
+                                "
                             />
                         </div>
                     </div>
@@ -167,7 +194,25 @@
                                 type="text"
                                 ref="IdentityPlace"
                                 placeholder="Nơi cấp CMND"
-                                :defaultValue="employee.IdentityPlace || ''"
+                                :defaultValue="
+                                    employee ? employee.identityPlace : ''
+                                "
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="data__field flex cl--12">
+                        <div class="input__field cl--12">
+                            <m-input
+                                tabIndex="11"
+                                label="Địa chỉ"
+                                type="text"
+                                placeholder="Nhập địa chỉ"
+                                ref="EmployeeAddress"
+                                :defaultValue="
+                                    employee ? employee.employeeAddress : ''
+                                "
                             />
                         </div>
                     </div>
@@ -176,30 +221,33 @@
                     <div class="data__field flex cl--12">
                         <div class="input__field">
                             <m-input
-                                tabIndex="11"
+                                tabIndex="12"
                                 label="ĐT di động"
                                 type="text"
                                 ref="PhoneNumber"
                                 placeholder="0123456789"
-                                :defaultValue="employee.PhoneNumber || ''"
-                            />
-                        </div>
-                        <div class="input__field">
-                            <m-input
-                                tabIndex="12"
-                                label="ĐT cố định"
-                                type="text"
-                                placeholder="0123456789"
+                                :defaultValue="
+                                    employee ? employee.phoneNumber : ''
+                                "
                             />
                         </div>
                         <div class="input__field">
                             <m-input
                                 tabIndex="13"
+                                label="ĐT cố định"
+                                type="text"
+                                placeholder="0123456789"
+                                ref="LandlineNumber"
+                            />
+                        </div>
+                        <div class="input__field">
+                            <m-input
+                                tabIndex="14"
                                 label="Email"
                                 type="text"
                                 ref="Email"
                                 placeholder="userexample@gmail.com"
-                                :defaultValue="employee.Email || ''"
+                                :defaultValue="employee ? employee.email : ''"
                             />
                         </div>
                     </div>
@@ -208,32 +256,38 @@
                     <div class="data__field flex cl--12">
                         <div class="input__field">
                             <m-input
-                                tabIndex="14"
+                                tabIndex="15"
                                 label="Tài khoản ngân hàng"
                                 type="text"
-                                ref=""
+                                ref="BankNumber"
                                 placeholder="Nhập tài khoản ngân hàng"
-                                :defaultValue="employee.BankNumber || ''"
-                            />
-                        </div>
-                        <div class="input__field">
-                            <m-input
-                                tabIndex="15"
-                                label="Tên ngân hàng"
-                                type="text"
-                                ref=""
-                                placeholder="Nhập tên ngân hàng"
-                                :defaultValue="employee.BankName || ''"
+                                :defaultValue="
+                                    employee ? employee.bankNumber : ''
+                                "
                             />
                         </div>
                         <div class="input__field">
                             <m-input
                                 tabIndex="16"
+                                label="Tên ngân hàng"
+                                type="text"
+                                ref="BankName"
+                                placeholder="Nhập tên ngân hàng"
+                                :defaultValue="
+                                    employee ? employee.bankName : ''
+                                "
+                            />
+                        </div>
+                        <div class="input__field">
+                            <m-input
+                                tabIndex="17"
                                 label="Chi nhánh"
                                 type="text"
-                                ref=""
+                                ref="BankBranch"
                                 placeholder="Nhập tên chi nhanh"
-                                :defaultValue="employee.BankBranch || ''"
+                                :defaultValue="
+                                    employee ? employee.bankBranch : ''
+                                "
                             />
                         </div>
                     </div>
@@ -251,11 +305,15 @@
                     <div
                         class="button button--gray"
                         tabIndex="18"
-                        @click="handleEventClick"
+                        @click="handleEventClick()"
                     >
                         Cất
                     </div>
-                    <div class="button button--green" tabIndex="19">
+                    <div
+                        class="button button--green"
+                        tabIndex="19"
+                        @click="saveAndNew"
+                    >
                         Cất và Thêm
                     </div>
                 </div>
@@ -286,12 +344,15 @@ export default {
             validate: [
                 {
                     name: "EmployeeCode",
-                    required: [EnumMisa.Validate.Required],
+                    required: [
+                        EnumMisa.Validate.Required,
+                        EnumMisa.Validate.EmployeeCode,
+                    ],
                     status: true,
                     msg: "",
                 },
                 {
-                    name: "FullName",
+                    name: "EmployeeName",
                     required: [
                         EnumMisa.Validate.Required,
                         EnumMisa.Validate.StringUTF8,
@@ -312,20 +373,38 @@ export default {
                     msg: "",
                 },
                 {
-                    name: "Address",
+                    name: "PositionName",
                     required: [EnumMisa.Validate.StringUTF8],
                     status: true,
                     msg: "",
                 },
                 {
-                    name: "PhoneNumber",
-                    required: [EnumMisa.Validate.Phone],
+                    name: "EmployeeAddress",
+                    required: [EnumMisa.Validate.StringUTF8],
                     status: true,
                     msg: "",
                 },
                 {
-                    name: "Email",
-                    required: [EnumMisa.Validate.Email],
+                    name: "LandlineNumber",
+                    required: [EnumMisa.Validate.StringUTF8],
+                    status: true,
+                    msg: "",
+                },
+                {
+                    name: "BankNumber",
+                    required: [EnumMisa.Validate.StringUTF8],
+                    status: true,
+                    msg: "",
+                },
+                {
+                    name: "BankName",
+                    required: [EnumMisa.Validate.StringUTF8],
+                    status: true,
+                    msg: "",
+                },
+                {
+                    name: "BankBranch",
+                    required: [EnumMisa.Validate.StringUTF8],
                     status: true,
                     msg: "",
                 },
@@ -333,13 +412,18 @@ export default {
         };
     },
     methods: {
-        // Xủ lý sự kiện ẩn form nhập
-        // Author: TVKHANG(11/09/22)
+        /**
+         * Xủ lý sự kiện ẩn form nhập
+         * Author: TVKHANG(11/09/22
+         */
         hiddenForm() {
             this.$emit("hiddenForm");
         },
-        // Xử lý ngày tháng để hiển thị
-        // Author: TVKhang 12/09/22
+
+        /**
+         * Xử lý ngày tháng để hiển thị
+         * Author: TVKhang 12/09/22
+         */
         formatTime(data) {
             if (data) {
                 data = new Date(data);
@@ -358,31 +442,42 @@ export default {
             return "";
         },
 
-        // Lấy dữ liệu từ input
-        // Author: TVKhang 20/09/22
+        /**
+         * Lấy dữ liệu từ input
+         * Author: TVKhang 20/09/22
+         */
         getInputData() {
             let employee = {
-                EmployeeCode: this.$refs.EmployeeCode.value,
-                FullName: this.$refs.FullName.value,
-                DateOfBirth: this.$refs.DateOfBirth.value,
-                IdentityNumber: this.$refs.IdentityNumber.value,
-                IdentityDate: this.$refs.IdentityDate.value,
-                IdentityPlace: this.$refs.IdentityPlace.value,
-                Address: this.$refs.Address.value,
-                PhoneNumber: this.$refs.PhoneNumber.value,
-                Email: this.$refs.Email.value,
-                DepartmentID:
-                    this.$refs.cbx_department.currentItem.DepartmentID,
-                DepartmentName:
-                    this.$refs.cbx_department.currentItem.DepartmentName,
-                Gender: this.genderValue,
+                employeeCode: this.$refs.EmployeeCode.value,
+                employeeName: this.$refs.EmployeeName.value,
+                dateOfBirth: this.$refs.DateOfBirth.value,
+                identityNumber: this.$refs.IdentityNumber.value,
+                identityDate: this.$refs.IdentityDate.value,
+                identityPlace: this.$refs.IdentityPlace.value,
+                positionName: this.$refs.PositionName.value,
+                employeeAddress: this.$refs.EmployeeAddress.value,
+                phoneNumber: this.$refs.PhoneNumber.value,
+                landlineNumber: this.$refs.LandlineNumber.value,
+                bankNumber: this.$refs.BankNumber.value,
+                bankName: this.$refs.BankName.value,
+                bankBranch: this.$refs.BankBranch.value,
+                email: this.$refs.Email.value,
+                departmentID:
+                    this.$refs.cbx_department.currentItem.departmentID,
+                departmentName:
+                    this.$refs.cbx_department.currentItem.departmentName,
+                gender: this.genderValue,
             };
+
+            // Xóa các trường date time trống
+            this.formatUpdateInfor(employee);
 
             // Lấy dữ liệu vào validate
             this.validate.forEach((e) => {
                 e.value = this.$refs[e["name"]].value;
             });
             validateHandle(this.validate);
+
             // Kiểm tra xem đã validate toàn bộ hay chưa
             let checkValidate = this.validate.find((e) => !e.status);
 
@@ -398,7 +493,11 @@ export default {
                 employee,
             };
         },
-        // Thêm cảnh vào input
+
+        /**
+         * Thêm cảnh báo vào input
+         * Author: TVKhang 24/09/22
+         */
         addValidateToInput() {
             this.validate.forEach((e) => {
                 this.$refs[e["name"]].msg = e.msg;
@@ -406,18 +505,20 @@ export default {
             });
         },
 
-        // Xử lý khi click cất
-        // Author: TVKhang 20/09/22
+        /**
+         * Xử lý khi click cất
+         * Author: TVKhang 20/09/22
+         */
         handleEventClick() {
             if (this.getInputData().status) {
                 let employee = this.getInputData().employee;
 
                 // Nếu tồn tại dữ liệu của nhân viên - Sửa thông tin nhân viên
-                if (this.employee.EmployeeCode) {
+                if (this.employeeId != "") {
                     this.$emit("updateEmp", {
-                        id: this.employee.EmployeeId,
+                        id: this.employee.employeeID,
                         data: employee,
-                        code: this.employee.EmployeeCode,
+                        code: this.employee.employeeCode,
                     });
                 } else {
                     // Nếu không tồn tại dữ liệu của nhân viên - Thêm mới nhân viên
@@ -425,19 +526,73 @@ export default {
                         data: employee,
                     });
                 }
+
+                console.log(employee);
             }
         },
 
-        // Lấy các trường dữ liệu đã thay đổi thông tin
+        /**
+         * Xử lý khi click cất
+         * Author: TVKhang 20/09/22
+         */
+        saveAndNew() {
+            this.handleEventClick();
+            this.$emit("showFormAddEmployee");
+        },
+        /**
+         * Lấy mã nhân viên lớn nhất
+         * Author: TVKhang()
+         */
+        async getMaxEmployeeCode() {
+            try {
+                let maxCode = await fetchAPI(
+                    `${process.env.VUE_APP_URL}/Employees/max-code`
+                );
+                maxCode = +maxCode.split("NV")[1] + 1;
+                maxCode = "NV" + maxCode;
+                return maxCode;
+            } catch (err) {
+                return "";
+            }
+        },
+
+        // Loại bỏ các trường date time trống
         formatUpdateInfor(emp) {
-            Object.entries(this.employee).forEach((e) => {
-                if (emp[e[0]] == e[1]) delete emp[e[0]];
+            Object.entries(emp).forEach((e) => {
+                if (
+                    (e[0] == "identityDate" && !e[1]) ||
+                    (e[0] == "dateOfBirth" && !e[1])
+                ) {
+                    delete emp[e[0]];
+                }
             });
         },
 
         // Lấy dữ liệu của gender
         selectGender(data) {
             this.genderValue = data;
+        },
+
+        /**
+         * Xử lý event key up
+         * Author: TVKhang(28/09/22)
+         */
+        handleEnventKeyDown(e) {
+            switch (e.keyCode) {
+                case EnumMisa.KeyCode.ESC:
+                    this.hiddenForm();
+                    break;
+            }
+
+            if (e.keyCode == EnumMisa.KeyCode.S && e.ctrlKey) {
+                e.preventDefault();
+                this.handleEventClick();
+            }
+
+            if (e.keyCode == EnumMisa.KeyCode.S && e.ctrlKey && e.shiftKey) {
+                e.preventDefault();
+                this.handleEventClick();
+            }
         },
     },
     async created() {
@@ -450,7 +605,11 @@ export default {
         let departments = fetchAPI(`${process.env.VUE_APP_URL}/Departments`);
 
         this.employee = await employee;
-        this.deparments = await departments;
+        this.deparments = (await departments).data;
+    },
+    mounted() {
+        // Tự động focus vào ô input đầu tiên
+        this.$refs.EmployeeCode.focus();
     },
 };
 </script>

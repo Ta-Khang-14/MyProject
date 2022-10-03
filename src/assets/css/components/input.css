@@ -2,14 +2,20 @@
     position: relative;
 }
 .input__field .input__msg {
+    display: none;
     position: absolute;
     left: 12px;
+    right: 12px;
     bottom: -10px;
     height: 20px;
     background-color: var(--input-err-background);
     color: var(--color-white);
     line-height: 20px;
     padding: 0px 8px;
+    text-align: center;
+}
+.input__field:hover .input__msg {
+    display: block;
 }
 .input__field .input__value.input--error {
     border: 1px solid var(--input-error-border) !important;

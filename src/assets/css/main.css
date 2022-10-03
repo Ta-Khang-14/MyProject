@@ -135,6 +135,3 @@ b {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
-::-webkit-scrollbar-track {
-    border-radius: 2px;
-}

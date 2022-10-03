@@ -16,10 +16,35 @@
                     {{ msg }}
                 </div>
             </div>
-            <div class="popup__footer dialog__footer flex">
+            <div
+                class="popup__footer dialog__footer flex"
+                v-if="type == TypeData.Warning"
+            >
                 <div class="button button--gray" @click="cancelPopup">Hủy</div>
                 <div class="button button--green" @click="actionPopup">
                     Đồng ý
+                </div>
+            </div>
+            <div
+                class="popup__footer popup__footer--notify dialog__footer flex"
+                v-if="type == TypeData.Notify"
+            >
+                <div class="button button--green" @click="actionPopup">
+                    Đóng
+                </div>
+            </div>
+            <div
+                class="popup__footer dialog__footer flex"
+                v-if="type == TypeData.Question"
+            >
+                <div class="button button--gray" @click="cancelPopup">Hủy</div>
+                <div class="button__field flex">
+                    <div class="button button--gray" @click="cancelForm">
+                        Không
+                    </div>
+                    <div class="button button--green" @click="actionPopup">
+                        Đồng ý
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,17 +64,20 @@ export default {
         };
     },
     methods: {
-        // Bắt sự kiện click vào hủy
+        // Bắt sự kiện click vào hủy, đóng
         // Author: TVKhang 18/09/22
         cancelPopup() {
             this.$emit("cancelPopup", { isReload: false });
+        },
+        cancelForm() {
+            this.$emit("cancelForm", { isReload: false });
         },
 
         // Bắt sự kiện click vào xóa/thêm/sửa
         // Author: TVKhang 19/09/22
         async actionPopup() {
             let result = await this.actionHandle();
-            if (result == 1) {
+            if (result) {
                 this.$emit("closeForm");
                 this.$emit("cancelPopup", { isReload: true });
             }
