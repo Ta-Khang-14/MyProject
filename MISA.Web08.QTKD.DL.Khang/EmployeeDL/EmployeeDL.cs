@@ -8,6 +8,34 @@ namespace MISA.Web08.QTKD.DL.Khang
     {
 
         /// <summary>
+        /// Lấy mã nhân viên lơn nhất
+        /// </summary>
+        /// <returns></returns>
+        public string MaxCodeEmployee()
+        {
+            try
+            {
+                //Khai báo store proceduce
+                string storedProceduceName = "Proc_GetMaxCode";
+
+                using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
+                {
+                    // Chuẩn bị tham số đầu vào
+                    var parameters = new DynamicParameters();
+                    parameters.Add("v_TableName", "employee");
+                    parameters.Add("v_ColumnCode", "EmployeeCodeNumber");
+
+                    string employeeCode = mysqlConnection.QueryFirstOrDefault<string>(storedProceduceName, parameters, commandType: System.Data.CommandType.StoredProcedure);
+                    return employeeCode;
+                }
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+        }
+
+        /// <summary>
         /// Xóa 1 nhân viên theo ID
         /// </summary>
         /// <param name="employeeID">Mã nhân viên cần xóa</param>
@@ -176,7 +204,7 @@ namespace MISA.Web08.QTKD.DL.Khang
         }
 
         /// <summary>
-        /// Xóa 1 nhân viên theo ID
+        /// Sửa 1 nhân viên theo ID
         /// </summary>
         /// <param name="employeeID">Mã nhân viên cần xóa</param>
         /// <returns>Mã nhân viên đã xóa</returns>
@@ -211,6 +239,7 @@ namespace MISA.Web08.QTKD.DL.Khang
                     parameters.Add("v_BankNumber", employee.BankNumber);
                     parameters.Add("v_BankBranch", employee.BankBranch);
                     parameters.Add("v_PositionName", employee.PositionName);
+                    parameters.Add("v_EmployeeCodeNumber", employee.EmployeeCodeNumber);
                     parameters.Add("v_ModifiedBy", "TVKHANG");
 
                     //Thực hiện gọi vào db để chạy procedure
@@ -231,6 +260,66 @@ namespace MISA.Web08.QTKD.DL.Khang
             {
                 return Guid.Empty;
             }
+        }
+
+        /// <summary>
+        /// Xóa nhiều nhân viên theo ID
+        /// </summary>
+        /// <param name="listEmployeeIDs">Danh sách ID nhân viên cần xóa</param>
+        /// <returns>Số lượng nhân viên đã xóa</returns>
+        public int DeleteEmployees(List<Guid> listEmployeeIDs)
+        {
+
+            //Khai báo store proceduce
+            string storedProceduceName = "Proc_Employee_DeleteById";
+
+            // Bộ đếm số nhân viên đã xóa
+            int count = 0;
+
+            using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
+            {
+                // chưa mở kết nối thì open
+                if (mysqlConnection.State != System.Data.ConnectionState.Open)
+                {
+                    mysqlConnection.Open();
+                }
+                foreach (Guid employeeID in listEmployeeIDs)
+                {
+                    using (var transaction = mysqlConnection.BeginTransaction())
+                    {
+
+                        try
+                        {
+                            // Chuẩn bị tham số đầu vào
+                            var parameters = new DynamicParameters();
+                            parameters.Add("v_TableName", "employee");
+                            parameters.Add("v_ID", employeeID);
+
+                            // Thực hiện khởi chạy procedure
+                            var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
+
+                            if (numberOfAffectedRows > 0)
+                            {
+                                transaction.Commit();
+                                count++;
+                            }
+                            else
+                            {
+                                transaction.Rollback();
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            return count;
+                        }
+                    }
+                }
+
+                return count;
+            }
+
         }
     }
 }

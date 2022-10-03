@@ -4,6 +4,13 @@ namespace MISA.WEB08.QTKD.BL.Khang
 {
     public interface IEmployeeBL : IBaseBL<Employee>
     {
+
+        /// <summary>
+        /// Lấy mã nhân viên lơn nhất
+        /// </summary>
+        /// <returns></returns>
+        public string MaxCodeEmployee();
+
         /// <summary>
         /// Tìm kiếm, lọc, phân trang nhân viên
         /// </summary>
@@ -38,5 +45,12 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// <returns>Mã nhân viên đã xóa</returns>
         /// Created by: TVKhang(29/09/22)
         public Guid DeleteEmployee(Guid employeeID);
+
+        /// <summary>
+        /// Xóa nhiều nhân viên theo ID
+        /// </summary>
+        /// <param name="listEmployeeIDs">Danh sách ID nhân viên cần xóa</param>
+        /// <returns>Số lượng nhân viên đã xóa</returns>
+        public int DeleteEmployees(List<Guid> listEmployeeIDs);
     }
 }

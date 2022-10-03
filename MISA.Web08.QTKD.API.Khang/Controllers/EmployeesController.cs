@@ -22,6 +22,23 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         #endregion
 
         #region Method
+
+        /// <summary>
+        /// Lấy mã nhân viên lơn nhất
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("max-code")]
+        public IActionResult MaxCodeEmployee()
+        {
+            var data = _employeeBL.MaxCodeEmployee();
+            if (data != "")
+            {
+                return StatusCode(StatusCodes.Status200OK, "NV-" + data);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+        }
+
         /// <summary>
         /// Tìm kiếm, lọc, phân trang nhân viên
         /// </summary>
@@ -44,9 +61,9 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Xuất dữ liệu nhân viên ra file excel
         /// </summary>
-        /// <returns></returns>
+        /// <returns>File excel chứa dữ liệu nhân viên</returns>
         [HttpGet]
         [Route("exportEmployees")]
         public IActionResult EmployeeExportFile()
@@ -159,6 +176,7 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         {
             ResponseHandle rs = ValidateData<Employee>.ValidateRequestData(employee, HttpContext.TraceIdentifier);
 
+            //Nếu validate thành công
             if (rs.IsSuccess)
             {
                 var data = _employeeBL.UpdateEmployee(employeeID, employee);
@@ -170,6 +188,7 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
             }
             else
             {
+                // Validate không thành công
                 return StatusCode(StatusCodes.Status400BadRequest, rs.ErrorResult);
             }
         }
@@ -192,5 +211,29 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
         }
         #endregion
+
+        /// <summary>
+        /// Xóa nhiều nhân viên theo ID
+        /// </summary>
+        /// <param name="listEmployeeIDs">Danh sách ID nhân viên cần xóa</param>
+        /// <returns>Số lượng nhân viên đã xóa</returns>
+        [HttpPost]
+        [Route("delete-batch")]
+        public IActionResult Employees([FromBody] List<Guid> listEmployeeIDs)
+        {
+            try
+            {
+                int result = _employeeBL.DeleteEmployees(listEmployeeIDs);
+                if (result > 0)
+                {
+                    return StatusCode(StatusCodes.Status200OK, result);
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+            }
+            catch (Exception err)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+            }
+        }
     }
 }

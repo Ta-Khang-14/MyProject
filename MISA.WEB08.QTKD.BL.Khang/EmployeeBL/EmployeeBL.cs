@@ -22,6 +22,16 @@ namespace MISA.WEB08.QTKD.BL.Khang
         #endregion
 
         #region Method
+
+        /// <summary>
+        /// Lấy mã nhân viên lơn nhất
+        /// </summary>
+        /// <returns></returns>
+        public string MaxCodeEmployee()
+        {
+            return _employeeDL.MaxCodeEmployee();
+        }
+
         /// <summary>
         /// Xóa 1 nhân viên theo ID
         /// </summary>
@@ -66,7 +76,19 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// Created by: TVKhang(29/09/22)
         public Guid UpdateEmployee(Guid employeeID, Employee employee)
         {
+            string code = employee.EmployeeCode;
+            employee.EmployeeCodeNumber = code.Replace("NV-", "");
             return _employeeDL.UpdateEmployee(employeeID, employee);
+        }
+
+        /// <summary>
+        /// Xóa nhiều nhân viên theo ID
+        /// </summary>
+        /// <param name="listEmployeeIDs">Danh sách ID nhân viên cần xóa</param>
+        /// <returns>Số lượng nhân viên đã xóa</returns>
+        public int DeleteEmployees(List<Guid> listEmployeeIDs)
+        {
+            return _employeeDL.DeleteEmployees(listEmployeeIDs);
         }
         #endregion
 

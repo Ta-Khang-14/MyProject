@@ -16,7 +16,13 @@ namespace MISA.Web08.QTKD.Common.Khang
         /// Mã nhân viên
         /// </summary>
         [IsNotNullOrEmpty("Mã nhân viên không được để trống")]
+        [IsEmployeeCode("Mã nhân viên sai định dạng")]
         public string EmployeeCode { get; set; }
+
+        /// <summary>
+        /// Giá trị của employeecode
+        /// </summary>
+        public string EmployeeCodeNumber { get; set; }
 
         /// <summary>
         /// Tên nhân viên

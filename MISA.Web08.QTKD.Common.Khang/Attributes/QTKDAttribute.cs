@@ -44,4 +44,14 @@
         {
         }
     }
+
+    /// <summary>
+    /// Xác định xem 1 thuộc tính có là Mã nhân viên hay không
+    /// </summary>
+    public class IsEmployeeCode : BaseValidateAttribute
+    {
+        public IsEmployeeCode(string errorMessage) : base(errorMessage)
+        {
+        }
+    }
 }

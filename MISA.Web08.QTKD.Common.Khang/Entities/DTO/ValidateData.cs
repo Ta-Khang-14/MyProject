@@ -26,6 +26,25 @@ namespace MISA.Web08.QTKD.Common.Khang
         }
 
         /// <summary>
+        /// Validate những thuộc tính có Attribute là IsEmployeeCode
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="propertyValue"></param>
+        /// <returns>Chuỗi string thể hiện lỗi</returns>
+        /// Created by: TVKhang(30/09/22)
+        public static string ValidateIsEmployeeCode(PropertyInfo property, object propertyValue)
+        {
+            var primaryKeyAttr = (IsEmployeeCode?)Attribute.GetCustomAttribute(property, typeof(IsEmployeeCode));
+            string pattern = @"NV-\d{8,}$";
+
+            if (primaryKeyAttr != null && !Regex.IsMatch(propertyValue?.ToString(), pattern))
+            {
+                return primaryKeyAttr.ErrorMessage;
+            }
+            return "";
+        }
+
+        /// <summary>
         /// Validate những thuộc tính có Attribute là PrimaryKey
         /// </summary>
         /// <param name="property"></param>
@@ -52,7 +71,7 @@ namespace MISA.Web08.QTKD.Common.Khang
         /// Created by: TVKhang(30/09/22)
         public static string ValidateIsEmail(PropertyInfo property, object propertyValue)
         {
-            if (propertyValue != null)
+            if (propertyValue != "" && propertyValue != null)
             {
                 var primaryKeyAttr = (IsEmail?)Attribute.GetCustomAttribute(property, typeof(IsEmail));
                 string pattern = @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z";
@@ -108,6 +127,13 @@ namespace MISA.Web08.QTKD.Common.Khang
                     );
                 }
 
+                if (ValidateData<T>.ValidateIsEmployeeCode(property, propertyValue) != "")
+                {
+                    errMsg = ValidateData<T>.ValidateIsEmployeeCode(property, propertyValue);
+                    return new ResponseHandle(false, new ErrorResult(
+                        QTKDErrorCode.EmailInvalid, Resource.DevMsg_Exception, Resource.UserMsg_Exception, errMsg, httpContext)
+                    );
+                }
             }
 
 
