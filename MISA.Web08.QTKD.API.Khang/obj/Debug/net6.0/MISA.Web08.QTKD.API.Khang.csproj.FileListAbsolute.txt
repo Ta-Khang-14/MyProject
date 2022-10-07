@@ -33,3 +33,14 @@ D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\MISA.Web08
 D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\MISA.WEB08.QTKD.BL.Khang.pdb
 D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\MISA.Web08.QTKD.Common.Khang.pdb
 D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\MISA.Web08.QTKD.DL.Khang.pdb
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\EPPlus.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\EPPlus.Interfaces.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\EPPlus.System.Drawing.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\Microsoft.IO.RecyclableMemoryStream.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\System.Drawing.Common.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\NLog.dll
+D:\Dot Net\MISA.Web08.QTKD\MISA.Web08.QTKD.API.Khang\bin\Debug\net6.0\NLog.Extensions.Logging.dll

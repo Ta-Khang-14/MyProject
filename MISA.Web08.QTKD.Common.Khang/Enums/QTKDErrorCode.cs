@@ -31,5 +31,15 @@
         /// Không phải là email
         /// </summary>
         EmailInvalid = 5,
+
+        /// <summary>
+        /// Dữ liệu đầu vào không hợp lệ
+        /// </summary>
+        DataInputInvalid = 6,
+
+        /// <summary>
+        /// Trùng ID
+        /// </summary>
+        DuplicateID = 7
     }
 }

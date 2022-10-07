@@ -9,13 +9,13 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// </summary>
         /// <returns>Danh sách toàn bộ bản ghi của 1 mảng</returns>
         /// Created by: TVK(29/09/22)
-        public PagingData<T> Records();
+        public ResponseHandle Records(string traceID);
 
         /// <summary>
         /// Lấy chi tiết 1 bản ghi theo ID
         /// </summary>
         /// <returns>Lấy chi tiết 1 bản ghi</returns>
         /// Created by: TVK(29/09/22)
-        public T Record(Guid recordID);
+        public ResponseHandle Record(Guid recordID, string traceID);
     }
 }

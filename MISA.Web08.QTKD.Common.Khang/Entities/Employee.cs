@@ -131,6 +131,11 @@ namespace MISA.Web08.QTKD.Common.Khang
         /// </summary>
         public string? ModifiedBy { get; set; }
 
+        /// <summary>
+        /// Nhân viên có đang sử dụng hay không
+        /// </summary>
+        public bool? IsActive { get; set; }
+
         #endregion
     }
 }

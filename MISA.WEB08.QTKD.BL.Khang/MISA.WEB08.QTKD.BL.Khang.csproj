@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MISA.Web08.QTKD.Common.Khang\MISA.Web08.QTKD.Common.Khang.csproj" />
     <ProjectReference Include="..\MISA.Web08.QTKD.DL.Khang\MISA.Web08.QTKD.DL.Khang.csproj" />
   </ItemGroup>

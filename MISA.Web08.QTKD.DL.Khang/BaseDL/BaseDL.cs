@@ -12,7 +12,7 @@ namespace MISA.Web08.QTKD.DL.Khang
         /// </summary>
         /// <returns>Danh sách toàn bộ bản ghi của 1 mảng</returns>
         /// Created by: TVK(29/09/22)
-        public PagingData<T> Records()
+        public ResponseHandle Records(string traceID)
         {
             try
             {
@@ -34,14 +34,14 @@ namespace MISA.Web08.QTKD.DL.Khang
                     var records = result.Read<T>().ToList();
                     var totalCount = result.Read<int>().Single();
 
-                    return new PagingData<T>(records, totalCount);
+                    return new ResponseHandle(true, 200, new PagingData<T>(records, totalCount), null);
                 }
             }
             catch (Exception err)
             {
 
                 Console.WriteLine(err);
-                return null;
+                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
             }
         }
 
@@ -51,7 +51,7 @@ namespace MISA.Web08.QTKD.DL.Khang
         /// <param name="recordID">ID của bản ghi</param>
         /// <returns>Chi tiết 1 bản ghi</returns>
         /// Created by: TVK(29/09/22)
-        public T Record(Guid recordID)
+        public ResponseHandle Record(Guid recordID, string traceID)
         {
             try
             {
@@ -67,13 +67,28 @@ namespace MISA.Web08.QTKD.DL.Khang
                 using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
                 {
                     var record = mysqlConnection.QueryFirstOrDefault<T>(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-                    return record;
+
+                    // Không tìm thấy record với ID yêu cầu
+                    if (record == null)
+                    {
+                        return new ResponseHandle(
+                            false, 400, null,
+                            new ErrorResult(
+                                QTKDErrorCode.InvalidID,
+                                Resource.DevMsg_GetRecordFailed,
+                                Resource.UserMsg_GetRecordFailed,
+                                "Bản ghi không tồn tại",
+                                traceID
+                                )
+                            );
+                    }
+                    return new ResponseHandle(true, 200, record, null);
                 }
             }
             catch (Exception err)
             {
                 Console.WriteLine(err);
-                return default(T);
+                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
             }
         }
     }

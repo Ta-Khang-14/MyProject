@@ -2,6 +2,7 @@
 using MISA.Web08.QTKD.Common.Khang;
 using MySqlConnector;
 
+
 namespace MISA.Web08.QTKD.DL.Khang
 {
     public class EmployeeDL : BaseDL<Employee>, IEmployeeDL
@@ -11,7 +12,7 @@ namespace MISA.Web08.QTKD.DL.Khang
         /// Lấy mã nhân viên lơn nhất
         /// </summary>
         /// <returns></returns>
-        public string MaxCodeEmployee()
+        public ResponseHandle MaxCodeEmployee(string traceID)
         {
             try
             {
@@ -26,12 +27,13 @@ namespace MISA.Web08.QTKD.DL.Khang
                     parameters.Add("v_ColumnCode", "EmployeeCodeNumber");
 
                     string employeeCode = mysqlConnection.QueryFirstOrDefault<string>(storedProceduceName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-                    return employeeCode;
+                    return new ResponseHandle(true, 200, employeeCode, null);
                 }
             }
             catch (Exception ex)
             {
-                return "";
+                Console.WriteLine(ex.Message);
+                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
             }
         }
 
@@ -41,7 +43,7 @@ namespace MISA.Web08.QTKD.DL.Khang
         /// <param name="employeeID">Mã nhân viên cần xóa</param>
         /// <returns>Mã nhân viên đã xóa</returns>
         /// Created by: TVKhang(29/09/22)
-        public Guid DeleteEmployee(Guid employeeID)
+        public ResponseHandle DeleteEmployee(Guid employeeID, string traceID)
         {
             try
             {
@@ -49,31 +51,51 @@ namespace MISA.Web08.QTKD.DL.Khang
                 //Khai báo store proceduce
                 string storedProceduceName = "Proc_Employee_DeleteById";
 
+                // Chuẩn bị tham số đầu vào
+                var parameters = new DynamicParameters();
+                parameters.Add("v_TableName", "employee");
+                parameters.Add("v_ID", employeeID);
+
                 using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
                 {
-                    // Chuẩn bị tham số đầu vào
-                    var parameters = new DynamicParameters();
-                    parameters.Add("v_TableName", "employee");
-                    parameters.Add("v_ID", employeeID);
-
-                    // Thực hiện khởi chạy procedure
-                    var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-
-                    // TH: Thành công
-                    if (numberOfAffectedRows > 0)
+                    // chưa mở kết nối thì open
+                    if (mysqlConnection.State != System.Data.ConnectionState.Open)
                     {
-                        return employeeID;
+                        mysqlConnection.Open();
                     }
-                    else
+                    using (var mysqlTransaction = mysqlConnection.BeginTransaction())
                     {
-                        return Guid.Empty;
+                        try
+                        {
+                            // Thực hiện khởi chạy procedure
+                            var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, mysqlTransaction, commandType: System.Data.CommandType.StoredProcedure);
+
+                            // TH: Thành công
+                            if (numberOfAffectedRows > 0)
+                            {
+                                mysqlTransaction.Commit();
+                                return new ResponseHandle(true, 200, employeeID, null);
+                            }
+                            else
+                            {
+                                mysqlTransaction.Rollback();
+                                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            mysqlTransaction.Rollback();
+                            return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
+                        }
                     }
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Guid.Empty;
+                Console.WriteLine(ex.Message);
+                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
             }
         }
 
@@ -86,7 +108,7 @@ namespace MISA.Web08.QTKD.DL.Khang
         /// <param name="limit">Số lượng bản ghi muốn lấy</param>
         /// <returns>Danh sách nhân viên</returns>
         /// Created by: TVKhang(29/09/22)
-        public PagingData<Employee> EmployeesFilter(string? keyword, string? sort, int? offset, int? limit)
+        public ResponseHandle EmployeesFilter(string? keyword, string? sort, int? offset, int? limit, string traceID)
         {
             try
             {
@@ -134,12 +156,15 @@ namespace MISA.Web08.QTKD.DL.Khang
                     var employees = result.Read<Employee>().ToList();
                     var tottalEmp = result.Read<int>().Single();
 
-                    return new PagingData<Employee>(employees, tottalEmp);
+                    object temp = new PagingData<Employee>(employees, tottalEmp);
+
+                    return new ResponseHandle(true, 200, new PagingData<Employee>(employees, tottalEmp), null);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                Console.WriteLine(ex.Message);
+                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
             }
         }
 
@@ -149,57 +174,82 @@ namespace MISA.Web08.QTKD.DL.Khang
         /// <param name="employee">Thông tin nhân viên cần thêm mới</param>
         /// <returns>ID nhân viên mới</returns>
         /// Created by: TVKhang(29/09/22)
-        public Guid InsertEmployee(Employee employee)
+        public ResponseHandle InsertEmployee(Employee employee, string traceID)
         {
             try
             {
+                //khai báo store proceduce
+                string storedProceduceName = "Proc_employee_Create";
+
+                //chuẩn bị tham số đầu vào
+                var parameters = new DynamicParameters();
+                parameters.Add("v_EmployeeID", employee.EmployeeID);
+                parameters.Add("v_EmployeeCode", employee.EmployeeCode);
+                parameters.Add("v_EmployeeCodeNumber", employee.EmployeeCodeNumber);
+                parameters.Add("v_EmployeeName  ", employee.EmployeeName);
+                parameters.Add("v_TypeOfCustomer", employee.TypeOfCustomer);
+                parameters.Add("v_DateOfBirth", employee.DateOfBirth);
+                parameters.Add("v_Gender", employee.Gender);
+                parameters.Add("v_IdentityNumber", employee.IdentityNumber);
+                parameters.Add("v_DepartmentID", employee.DepartmentID);
+                parameters.Add("v_DepartmentName", employee.DepartmentName);
+                parameters.Add("v_IdentityPlace", employee.IdentityPlace);
+                parameters.Add("v_IdentityDate", employee.IdentityDate);
+                parameters.Add("v_EmployeeAddress", employee.EmployeeAddress);
+                parameters.Add("v_PhoneNumber", employee.PhoneNumber);
+                parameters.Add("v_LandlineNumber", employee.LandlineNumber);
+                parameters.Add("v_Email", employee.Email);
+                parameters.Add("v_BankName", employee.BankName);
+                parameters.Add("v_BankNumber", employee.BankNumber);
+                parameters.Add("v_BankBranch", employee.BankBranch);
+                parameters.Add("v_PositionName", employee.PositionName);
+                parameters.Add("v_CreatedBy", "TVKHANG");
+                parameters.Add("v_CreatedDate", DateTime.Now);
+                parameters.Add("v_ModifiedBy", "TVKHANG");
+                parameters.Add("v_ModifiedDate", DateTime.Now);
+
+
                 using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
                 {
-                    //khai báo store proceduce
-                    string storedProceduceName = "Proc_employee_Create";
-
-                    //chuẩn bị tham số đầu vào
-                    var employeeID = Guid.NewGuid();
-                    var parameters = new DynamicParameters();
-                    parameters.Add("v_EmployeeID", employeeID);
-                    parameters.Add("v_EmployeeCode", employee.EmployeeCode);
-                    parameters.Add("v_EmployeeName  ", employee.EmployeeName);
-                    parameters.Add("v_TypeOfCustomer", employee.TypeOfCustomer);
-                    parameters.Add("v_DateOfBirth", employee.DateOfBirth);
-                    parameters.Add("v_Gender", employee.Gender);
-                    parameters.Add("v_IdentityNumber", employee.IdentityNumber);
-                    parameters.Add("v_DepartmentID", employee.DepartmentID);
-                    parameters.Add("v_DepartmentName", employee.DepartmentName);
-                    parameters.Add("v_IdentityPlace", employee.IdentityPlace);
-                    parameters.Add("v_IdentityDate", employee.IdentityDate);
-                    parameters.Add("v_EmployeeAddress", employee.EmployeeAddress);
-                    parameters.Add("v_PhoneNumber", employee.PhoneNumber);
-                    parameters.Add("v_LandlineNumber", employee.LandlineNumber);
-                    parameters.Add("v_Email", employee.Email);
-                    parameters.Add("v_BankName", employee.BankName);
-                    parameters.Add("v_BankNumber", employee.BankNumber);
-                    parameters.Add("v_BankBranch", employee.BankBranch);
-                    parameters.Add("v_PositionName", employee.PositionName);
-                    parameters.Add("v_CreatedBy", "TVKHANG");
-                    parameters.Add("v_ModifiedBy", "TVKHANG");
-
-                    //Thực hiện gọi vào db để chạy procedure
-                    var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-
-                    // TH: Thành công
-                    if (numberOfAffectedRows > 0)
+                    // chưa mở kết nối thì open
+                    if (mysqlConnection.State != System.Data.ConnectionState.Open)
                     {
-                        return employeeID;
+                        mysqlConnection.Open();
                     }
-                    else  //TH2: Thất bại
+
+                    using (var mysqlTransaction = mysqlConnection.BeginTransaction())
                     {
-                        return Guid.Empty;
+
+                        try
+                        {
+                            //Thực hiện gọi vào db để chạy procedure
+                            var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, mysqlTransaction, commandType: System.Data.CommandType.StoredProcedure);
+
+                            // TH: Thành công
+                            if (numberOfAffectedRows > 0)
+                            {
+                                mysqlTransaction.Commit();
+                                return new ResponseHandle(true, 201, employee.EmployeeID, null);
+                            }
+                            else  //TH2: Thất bại
+                            {
+                                mysqlTransaction.Rollback();
+                                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
+                        }
                     }
+
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Guid.Empty;
+                Console.WriteLine(ex.Message);
+                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
             }
         }
 
@@ -209,56 +259,76 @@ namespace MISA.Web08.QTKD.DL.Khang
         /// <param name="employeeID">Mã nhân viên cần xóa</param>
         /// <returns>Mã nhân viên đã xóa</returns>
         /// Created by: TVKhang(29/09/22)
-        public Guid UpdateEmployee(Guid employeeID, Employee employee)
+        public ResponseHandle UpdateEmployee(Guid employeeID, Employee employee, string traceID)
         {
             try
             {
+                //khai báo store proceduce
+                string storedProceduceName = "Proc_employee_Update";
+
+                //chuẩn bị tham số đầu vào
+                var parameters = new DynamicParameters();
+                parameters.Add("v_EmployeeID", employeeID);
+                parameters.Add("v_EmployeeCode", employee.EmployeeCode);
+                parameters.Add("v_EmployeeName  ", employee.EmployeeName);
+                parameters.Add("v_TypeOfCustomer", employee.TypeOfCustomer);
+                parameters.Add("v_DateOfBirth", employee.DateOfBirth);
+                parameters.Add("v_Gender", employee.Gender);
+                parameters.Add("v_IdentityNumber", employee.IdentityNumber);
+                parameters.Add("v_DepartmentID", employee.DepartmentID);
+                parameters.Add("v_DepartmentName", employee.DepartmentName);
+                parameters.Add("v_IdentityPlace", employee.IdentityPlace);
+                parameters.Add("v_IdentityDate", employee.IdentityDate);
+                parameters.Add("v_EmployeeAddress", employee.EmployeeAddress);
+                parameters.Add("v_PhoneNumber", employee.PhoneNumber);
+                parameters.Add("v_LandlineNumber", employee.LandlineNumber);
+                parameters.Add("v_Email", employee.Email);
+                parameters.Add("v_BankName", employee.BankName);
+                parameters.Add("v_BankNumber", employee.BankNumber);
+                parameters.Add("v_BankBranch", employee.BankBranch);
+                parameters.Add("v_PositionName", employee.PositionName);
+                parameters.Add("v_EmployeeCodeNumber", employee.EmployeeCodeNumber);
+                parameters.Add("v_ModifiedBy", "TVKHANG");
+                parameters.Add("v_IsActive", employee.IsActive);
+
                 using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
                 {
-                    //khai báo store proceduce
-                    string storedProceduceName = "Proc_employee_Update";
-
-                    //chuẩn bị tham số đầu vào
-                    var parameters = new DynamicParameters();
-                    parameters.Add("v_EmployeeID", employeeID);
-                    parameters.Add("v_EmployeeCode", employee.EmployeeCode);
-                    parameters.Add("v_EmployeeName  ", employee.EmployeeName);
-                    parameters.Add("v_TypeOfCustomer", employee.TypeOfCustomer);
-                    parameters.Add("v_DateOfBirth", employee.DateOfBirth);
-                    parameters.Add("v_Gender", employee.Gender);
-                    parameters.Add("v_IdentityNumber", employee.IdentityNumber);
-                    parameters.Add("v_DepartmentID", employee.DepartmentID);
-                    parameters.Add("v_DepartmentName", employee.DepartmentName);
-                    parameters.Add("v_IdentityPlace", employee.IdentityPlace);
-                    parameters.Add("v_IdentityDate", employee.IdentityDate);
-                    parameters.Add("v_EmployeeAddress", employee.EmployeeAddress);
-                    parameters.Add("v_PhoneNumber", employee.PhoneNumber);
-                    parameters.Add("v_LandlineNumber", employee.LandlineNumber);
-                    parameters.Add("v_Email", employee.Email);
-                    parameters.Add("v_BankName", employee.BankName);
-                    parameters.Add("v_BankNumber", employee.BankNumber);
-                    parameters.Add("v_BankBranch", employee.BankBranch);
-                    parameters.Add("v_PositionName", employee.PositionName);
-                    parameters.Add("v_EmployeeCodeNumber", employee.EmployeeCodeNumber);
-                    parameters.Add("v_ModifiedBy", "TVKHANG");
-
-                    //Thực hiện gọi vào db để chạy procedure
-                    var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-
-                    // TH: Thành công
-                    if (numberOfAffectedRows > 0)
+                    // chưa mở kết nối thì open
+                    if (mysqlConnection.State != System.Data.ConnectionState.Open)
                     {
-                        return employeeID;
+                        mysqlConnection.Open();
                     }
-                    else  //TH2: Thất bại
+                    using (var mysqlTransaction = mysqlConnection.BeginTransaction())
                     {
-                        return Guid.Empty;
+                        try
+                        {
+                            //Thực hiện gọi vào db để chạy procedure
+                            var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, mysqlTransaction, commandType: System.Data.CommandType.StoredProcedure);
+
+                            // TH: Thành công
+                            if (numberOfAffectedRows > 0)
+                            {
+                                mysqlTransaction.Commit();
+                                return new ResponseHandle(true, 200, employeeID, null);
+                            }
+                            else  //TH2: Thất bại
+                            {
+                                mysqlTransaction.Rollback();
+                                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
+                        }
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Guid.Empty;
+                Console.WriteLine(ex.Message);
+                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
             }
         }
 
@@ -267,59 +337,56 @@ namespace MISA.Web08.QTKD.DL.Khang
         /// </summary>
         /// <param name="listEmployeeIDs">Danh sách ID nhân viên cần xóa</param>
         /// <returns>Số lượng nhân viên đã xóa</returns>
-        public int DeleteEmployees(List<Guid> listEmployeeIDs)
+        public ResponseHandle DeleteEmployees(string listEmployeeIDs, string traceID)
         {
-
-            //Khai báo store proceduce
-            string storedProceduceName = "Proc_Employee_DeleteById";
-
-            // Bộ đếm số nhân viên đã xóa
-            int count = 0;
-
-            using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
+            try
             {
-                // chưa mở kết nối thì open
-                if (mysqlConnection.State != System.Data.ConnectionState.Open)
-                {
-                    mysqlConnection.Open();
-                }
-                foreach (Guid employeeID in listEmployeeIDs)
-                {
-                    using (var transaction = mysqlConnection.BeginTransaction())
-                    {
+                //Khai báo store proceduce
+                string storedProceduceName = "Proc_employee_DeleteEmployees";
+                var parameters = new DynamicParameters();
+                parameters.Add("v_EmployeeIDs", listEmployeeIDs);
 
+                using (var mysqlConnection = new MySqlConnection(DataContext.MySqlConnectionString))
+                {
+
+                    // chưa mở kết nối thì open
+                    if (mysqlConnection.State != System.Data.ConnectionState.Open)
+                    {
+                        mysqlConnection.Open();
+                    }
+                    using (var mysqlTransaction = mysqlConnection.BeginTransaction())
+                    {
                         try
                         {
-                            // Chuẩn bị tham số đầu vào
-                            var parameters = new DynamicParameters();
-                            parameters.Add("v_TableName", "employee");
-                            parameters.Add("v_ID", employeeID);
-
-                            // Thực hiện khởi chạy procedure
-                            var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
-
+                            var numberOfAffectedRows = mysqlConnection.Execute(storedProceduceName, parameters, mysqlTransaction, commandType: System.Data.CommandType.StoredProcedure);
                             if (numberOfAffectedRows > 0)
                             {
-                                transaction.Commit();
-                                count++;
+                                mysqlTransaction.Commit();
+                                return new ResponseHandle(true, 200, numberOfAffectedRows, null);
                             }
                             else
                             {
-                                transaction.Rollback();
+                                mysqlTransaction.Rollback();
+                                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
                             }
-
                         }
                         catch (Exception ex)
                         {
-                            transaction.Rollback();
-                            return count;
+                            Console.WriteLine(ex.Message);
+                            mysqlTransaction.Rollback();
+                            return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
                         }
                     }
+
                 }
-
-                return count;
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new ResponseHandle(false, 500, null, ErrorResult.Generate500Error(traceID));
+            }
         }
+
     }
 }
+

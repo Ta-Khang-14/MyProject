@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MISA.Web08.QTKD.Common.Khang;
 using MISA.WEB08.QTKD.BL.Khang;
-using System.Text;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.Drawing;
 
 namespace MISA.Web08.QTKD.API.Khang.Controllers
 {
@@ -31,12 +33,15 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         [Route("max-code")]
         public IActionResult MaxCodeEmployee()
         {
-            var data = _employeeBL.MaxCodeEmployee();
-            if (data != "")
+            ResponseHandle res = _employeeBL.MaxCodeEmployee(HttpContext.TraceIdentifier);
+
+            // Kiểm tra xem request đã thành công hay chưa
+            if (res.IsSuccess)
             {
+                string data = res.Data.ToString();
                 return StatusCode(StatusCodes.Status200OK, "NV-" + data);
             }
-            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+            return StatusCode(StatusCodes.Status500InternalServerError, res.ErrorResult);
         }
 
         /// <summary>
@@ -52,12 +57,15 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         [Route("filter")]
         public IActionResult Employees([FromQuery] string? keyword, [FromQuery] string? sort, [FromQuery] int? offset, [FromQuery] int? limit)
         {
-            var data = _employeeBL.EmployeesFilter(keyword, sort, offset, limit);
-            if (data != null)
+            ResponseHandle res = _employeeBL.EmployeesFilter(keyword, sort, offset, limit, HttpContext.TraceIdentifier);
+
+            // Kiểm tra xem request đã thành công hay chưa
+            if (res.IsSuccess)
             {
+                PagingData<Employee> data = (PagingData<Employee>)res.Data;
                 return StatusCode(StatusCodes.Status200OK, data);
             }
-            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+            return StatusCode(StatusCodes.Status500InternalServerError, res.ErrorResult);
         }
 
         /// <summary>
@@ -70,68 +78,154 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         {
             try
             {
-                List<Employee> ListEmployee = new List<Employee>();
-                ListEmployee = _employeeBL.Records().Data;
+                // Lấy danh sách nhân viên
+                ResponseHandle rs = _employeeBL.Records(HttpContext.TraceIdentifier);
 
-                StringBuilder str = new StringBuilder();
-                str.Append("<table border=`" + "1px" + "`b>");
-                str.Append("<tr>");
-                str.Append("<td><b><font face=Arial Narrow size=3>STT</font></b></td>");
-                str.Append("<td><b><font face=Arial Narrow size=3>Mã nhân viên</font></b></td>");
-                str.Append("<td><b><font face=Arial Narrow size=3>Họ tên nhân viên</font></b></td>");
-                str.Append("<td><b><font face=Arial Narrow size=3>Giới tính</font></b></td>");
-                str.Append("<td><b><font face=Arial Narrow size=3>Ngày sinh</font></b></td>");
-                str.Append("<td><b><font face=Arial Narrow size=3>Chức danh</font></b></td>");
-                str.Append("<td><b><font face=Arial Narrow size=3>Tên đơn vị</font></b></td>");
-                str.Append("<td><b><font face=Arial Narrow size=3>Số tài khoản</font></b></td>");
-                str.Append("<td><b><font face=Arial Narrow size=3>Tên ngân hàng</font></b></td>");
-                str.Append("</tr>");
-
-                int index = 1;
-                foreach (Employee val in ListEmployee)
+                // Lấy danh sách thành công
+                if (rs.IsSuccess)
                 {
-                    string gender = "";
-                    switch (val.Gender)
-                    {
-                        case Gender.Male:
-                            gender = "Nam";
-                            break;
-                        case Gender.Female:
-                            gender = "Nữ";
-                            break;
-                        case Gender.Other:
-                            gender = "Khác";
-                            break;
-                    }
+                    PagingData<Employee> data = (PagingData<Employee>)rs.Data;
+                    List<Employee> employees = data.Data;
 
-                    str.Append("<tr>");
-                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + index.ToString() + "</font></td>");
-                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.EmployeeCode.ToString() + "</font></td>");
-                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.EmployeeName.ToString() + "</font></td>");
-                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + gender + "</font></td>");
-                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.DateOfBirth?.ToString() + "</font></td>");
-                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.PositionName?.ToString() + "</font></td>");
-                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.DepartmentName?.ToString() + "</font></td>");
-                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.BankNumber?.ToString() + "</font></td>");
-                    str.Append("<td><font face=Arial Narrow size=" + "14px" + ">" + val.BankName?.ToString() + "</font></td>");
-                    str.Append("</tr>");
-                    index++;
+                    var stream = new MemoryStream();
+
+                    using (var xlPackage = new ExcelPackage(stream))
+                    {
+                        var worksheet = xlPackage.Workbook.Worksheets.Add("Danh_sach_nhan_vien");
+
+                        worksheet.Row(2).Height = 20;
+                        worksheet.Row(3).Height = 20;
+
+                        worksheet.Cells["A1"].Value = "Danh sách nhân viên";
+
+                        // Hợp cột A1 -> J1 của dòng 1 trong sheet Danh_sach_nhan_vien
+                        using (var r = worksheet.Cells["A1:J1"])
+                        {
+                            r.Merge = true;
+
+                            // Định dạng kiểu chữ
+                            r.Style.Font.Size = 16;
+                            r.Style.Font.Bold = true;
+
+                            // Căn chính giữa
+                            r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                            r.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                        }
+
+
+                        using (var r = worksheet.Cells["A2:J2"])
+                        {
+                            r.Merge = true;
+                        }
+                        using (var r = worksheet.Cells["A3:J3"])
+                        {
+                            // Định dạng kiểu chữ
+                            r.Style.Font.Size = 12;
+                            r.Style.Font.Bold = true;
+                            r.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            r.Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+
+                            // Căn chính giữa
+                            r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                            r.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+
+                            // Định dạng border
+                            r.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                            r.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                            r.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                            r.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                        }
+                        worksheet.Cells["A3"].Value = "STT";
+                        worksheet.Cells["B3"].Value = "Mã nhân viên";
+                        worksheet.Cells["C3"].Value = "Tên nhân viên";
+                        worksheet.Cells["D3"].Value = "Giới tính";
+                        worksheet.Cells["E3"].Value = "Ngày sinh";
+                        worksheet.Cells["F3"].Value = "Vị trí";
+                        worksheet.Cells["G3"].Value = "Tên phòng ban";
+                        worksheet.Cells["H3"].Value = "Số tài khoản";
+                        worksheet.Cells["I3"].Value = "Tên ngân hàng";
+                        worksheet.Cells["J3"].Value = "Chi nhánh ngân hàng";
+
+                        worksheet.Column(1).Width = 6;
+                        worksheet.Column(2).Width = 20;
+                        worksheet.Column(3).Width = 25;
+                        worksheet.Column(4).Width = 12;
+                        worksheet.Column(5).Width = 20;
+                        worksheet.Column(6).Width = 20;
+                        worksheet.Column(7).Width = 20;
+                        worksheet.Column(8).Width = 20;
+                        worksheet.Column(9).Width = 20;
+                        worksheet.Column(10).Width = 25;
+
+                        int row = 4;
+                        int STT = 1;
+                        int start = 4;
+                        int end = 4;
+                        foreach (var emp in employees)
+                        {
+                            string gender = "";
+                            switch (emp.Gender)
+                            {
+                                case Gender.Male:
+                                    gender = "Nam";
+                                    break;
+                                case Gender.Female:
+                                    gender = "Nữ";
+                                    break;
+                                case Gender.Other:
+                                    gender = "Khác";
+                                    break;
+                            }
+
+                            worksheet.Cells[row, 1].Value = STT++;
+                            worksheet.Cells[row, 2].Value = emp.EmployeeCode;
+                            worksheet.Cells[row, 3].Value = emp.EmployeeName;
+                            worksheet.Cells[row, 4].Value = gender;
+                            worksheet.Cells[row, 5].Value = emp.DateOfBirth?.ToString("dd/MM/yyyy");
+                            worksheet.Cells[row, 6].Value = emp.PositionName;
+                            worksheet.Cells[row, 7].Value = emp.DepartmentName;
+                            worksheet.Cells[row, 8].Value = emp.BankNumber;
+                            worksheet.Cells[row, 9].Value = emp.BankName;
+                            worksheet.Cells[row, 10].Value = emp.BankBranch;
+
+                            // Tạo border 1 trường dữ liệu
+                            var recordRow = worksheet.Cells["A" + start++ + ":J" + end++];
+
+                            recordRow.Style.Font.Size = 12;
+                            recordRow.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                            recordRow.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                            recordRow.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                            recordRow.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                            row++;
+                        }
+
+                        xlPackage.Workbook.Properties.Title = "DANH SÁCH NHÂN VIÊN";
+                        xlPackage.Workbook.Properties.Author = "Tạ Việt Khang";
+
+                        //worksheet.Cells.AutoFitColumns();
+                        worksheet.Cells.Style.Font.Name = "Arial";
+
+                        xlPackage.Save();
+
+                    }
+                    stream.Position = 0;
+
+                    return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Danh_sach_nhan_vien.xlsx");
                 }
 
-
-                str.Append("</table>");
-                HttpContext.Response.Headers.Add("content-disposition", "attachment; filename=Danh_Sach_Nhan_Vien.xls");
-                this.Response.ContentType = "application/vnd.ms-excel";
-                byte[] temp = System.Text.Encoding.UTF8.GetBytes(str.ToString());
-
-                return File(temp, "application/vnd.ms-excel");
+                else
+                {
+                    // Lấy danh sách thất bại
+                    return StatusCode(StatusCodes.Status500InternalServerError, rs.ErrorResult);
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
             }
         }
-
         /// <summary>
         /// Thêm mới 1 nhân viên
         /// </summary>
@@ -142,19 +236,29 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         [Route("")]
         public IActionResult Employee([FromBody] Employee employee)
         {
+            employee.Email = employee.Email != null ? employee.Email.ToLower() : employee.Email;
             ResponseHandle rs = ValidateData<Employee>.ValidateRequestData(employee, HttpContext.TraceIdentifier);
 
+            // Kiểm tra xem dữ liệu đầu vào đã validate hay chưa
             if (rs.IsSuccess)
             {
-                // Kiểm tra trùng mã nhân viên
                 if (true)
                 {
-                    var data = _employeeBL.InsertEmployee(employee);
-                    if (data != Guid.Empty)
+                    ResponseHandle res = _employeeBL.InsertEmployee(employee, HttpContext.TraceIdentifier);
+
+                    // Kiểm tra xem request đã được thực hiện hay chưa
+                    if (res.IsSuccess)
                     {
+                        var data = res.Data;
                         return StatusCode(StatusCodes.Status201Created, data);
                     }
-                    return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+
+                    // Request thất bại
+                    if (res.Status == 400)
+                    {
+                        return StatusCode(StatusCodes.Status400BadRequest, res.ErrorResult);
+                    }
+                    return StatusCode(StatusCodes.Status500InternalServerError, res.ErrorResult);
                 }
             }
             else
@@ -174,17 +278,27 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         [Route("{employeeID}")]
         public IActionResult Employee([FromRoute] Guid employeeID, [FromBody] Employee employee)
         {
+            employee.Email = employee.Email != null ? employee.Email.ToLower() : employee.Email;
             ResponseHandle rs = ValidateData<Employee>.ValidateRequestData(employee, HttpContext.TraceIdentifier);
 
-            //Nếu validate thành công
+            //Kiểm tra xem dữ liệu đầu vào đã đưuọc validate hay chưa
             if (rs.IsSuccess)
             {
-                var data = _employeeBL.UpdateEmployee(employeeID, employee);
-                if (data != Guid.Empty)
+                ResponseHandle res = _employeeBL.UpdateEmployee(employeeID, employee, HttpContext.TraceIdentifier);
+
+                // Kiểm tra xem request đã thực hiện thành công hay chưa
+                if (res.IsSuccess)
                 {
-                    return StatusCode(StatusCodes.Status201Created, data);
+                    Guid emp = (Guid)res.Data;
+                    return StatusCode(StatusCodes.Status201Created, emp);
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+
+                // Request thất bại
+                if (res.Status == 400)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, rs.ErrorResult);
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, rs.ErrorResult);
             }
             else
             {
@@ -203,12 +317,14 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         [Route("{employeeID}")]
         public IActionResult Employee([FromRoute] Guid employeeID)
         {
-            var data = _employeeBL.DeleteEmployee(employeeID);
-            if (data != Guid.Empty)
+            ResponseHandle rs = _employeeBL.DeleteEmployee(employeeID, HttpContext.TraceIdentifier);
+
+            // Kiểm tra xem request đã thực hiện thành công hay chưa
+            if (rs.IsSuccess)
             {
-                return StatusCode(StatusCodes.Status201Created, data);
+                return StatusCode(StatusCodes.Status201Created, employeeID);
             }
-            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+            return StatusCode(StatusCodes.Status500InternalServerError, rs.ErrorResult);
         }
         #endregion
 
@@ -221,19 +337,23 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         [Route("delete-batch")]
         public IActionResult Employees([FromBody] List<Guid> listEmployeeIDs)
         {
-            try
+            ResponseHandle rs = _employeeBL.DeleteEmployees(listEmployeeIDs, HttpContext.TraceIdentifier);
+
+            // Kiểm tra xem request đã thực hiện thành công hay chưa
+            if (rs.IsSuccess)
             {
-                int result = _employeeBL.DeleteEmployees(listEmployeeIDs);
-                if (result > 0)
-                {
-                    return StatusCode(StatusCodes.Status200OK, result);
-                }
-                return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+                // Số bản ghi đã xóa
+                int count = (int)rs.Data;
+                return StatusCode(StatusCodes.Status200OK, count);
             }
-            catch (Exception err)
+
+            // Request thất bại
+            if (rs.Status == 400)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+                return StatusCode(StatusCodes.Status400BadRequest, rs.ErrorResult);
             }
+            return StatusCode(StatusCodes.Status500InternalServerError, rs.ErrorResult);
+
         }
     }
 }

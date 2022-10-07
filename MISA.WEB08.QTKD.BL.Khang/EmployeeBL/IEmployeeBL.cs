@@ -9,7 +9,7 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// Lấy mã nhân viên lơn nhất
         /// </summary>
         /// <returns></returns>
-        public string MaxCodeEmployee();
+        public ResponseHandle MaxCodeEmployee(string traceID);
 
         /// <summary>
         /// Tìm kiếm, lọc, phân trang nhân viên
@@ -20,7 +20,7 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// <param name="limit">Số lượng bản ghi muốn lấy</param>
         /// <returns>Danh sách nhân viên</returns>
         /// Created by: TVKhang(29/09/22)
-        public PagingData<Employee> EmployeesFilter(string? keyword, string? sort, int? offset, int? limit);
+        public ResponseHandle EmployeesFilter(string? keyword, string? sort, int? offset, int? limit, string traceID);
 
         /// <summary>
         /// Thêm mới 1 nhân viên
@@ -28,7 +28,7 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// <param name="employee">Thông tin nhân viên cần thêm mới</param>
         /// <returns>ID nhân viên mới</returns>
         /// Created by: TVKhang(29/09/22)
-        public Guid InsertEmployee(Employee employee);
+        public ResponseHandle InsertEmployee(Employee employee, string traceID);
 
         /// <summary>
         /// Cập nhật thông tin nhân viên
@@ -36,7 +36,7 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// <param name="employee"></param>
         /// <returns>Mã nhân viên đã được cập nhật</returns>
         /// Created by: TVKhang(29/09/22)
-        public Guid UpdateEmployee(Guid employeeID, Employee employee);
+        public ResponseHandle UpdateEmployee(Guid employeeID, Employee employee, string traceID);
 
         /// <summary>
         /// Xóa 1 nhân viên theo ID
@@ -44,13 +44,13 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// <param name="employeeID">Mã nhân viên cần xóa</param>
         /// <returns>Mã nhân viên đã xóa</returns>
         /// Created by: TVKhang(29/09/22)
-        public Guid DeleteEmployee(Guid employeeID);
+        public ResponseHandle DeleteEmployee(Guid employeeID, string traceID);
 
         /// <summary>
         /// Xóa nhiều nhân viên theo ID
         /// </summary>
         /// <param name="listEmployeeIDs">Danh sách ID nhân viên cần xóa</param>
         /// <returns>Số lượng nhân viên đã xóa</returns>
-        public int DeleteEmployees(List<Guid> listEmployeeIDs);
+        public ResponseHandle DeleteEmployees(List<Guid> listEmployeeIDs, string traceID);
     }
 }

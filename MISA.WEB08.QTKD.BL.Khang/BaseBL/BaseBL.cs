@@ -22,9 +22,9 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// </summary>
         /// <returns>Danh sách toàn bộ bản ghi của 1 mảng</returns>
         /// Created by: TVK(29/09/22)
-        public PagingData<T> Records()
+        public ResponseHandle Records(string traceID)
         {
-            return _baseDL.Records();
+            return _baseDL.Records(traceID);
         }
 
         /// <summary>
@@ -32,9 +32,9 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// </summary>
         /// <returns>Thông tin chi tiết 1 bản ghi</returns>
         /// Created by: TVK(29/09/22)
-        public T Record(Guid recordID)
+        public ResponseHandle Record(Guid recordID, string traceID)
         {
-            return _baseDL.Record(recordID);
+            return _baseDL.Record(recordID, traceID);
         }
         #endregion
     }

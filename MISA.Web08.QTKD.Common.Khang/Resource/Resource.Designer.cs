@@ -79,6 +79,15 @@ namespace MISA.Web08.QTKD.Common.Khang {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Get an record failed.
+        /// </summary>
+        public static string DevMsg_GetRecordFailed {
+            get {
+                return ResourceManager.GetString("DevMsg_GetRecordFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert a new employee failed.
         /// </summary>
         public static string DevMsg_InsertEmployeeFailed {
@@ -129,6 +138,15 @@ namespace MISA.Web08.QTKD.Common.Khang {
         public static string UserMsg_Exception {
             get {
                 return ResourceManager.GetString("UserMsg_Exception", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lấy thông tin bản ghi thất bại.
+        /// </summary>
+        public static string UserMsg_GetRecordFailed {
+            get {
+                return ResourceManager.GetString("UserMsg_GetRecordFailed", resourceCulture);
             }
         }
         

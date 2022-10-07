@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Resource\Resource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

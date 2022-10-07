@@ -1,8 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "9LufP1+wW24fTBdLCx9i32cXXeG8BfzQk40lJLFg1OWmmVDZJIf/M1cA7THu6Q5u/kaljItgcDoHSrZZ4IEiTQ==",
+  "dgSpecHash": "dbO5FyJENhHZU0tUPkH4XHCoKyCfBRD1EFf/Y9jxPDBS/LanY+Uz9sO77DvBHZf/mprieQh5ie27S/RpYKfHKA==",
   "success": true,
   "projectFilePath": "D:\\Dot Net\\MISA.Web08.QTKD\\MISA.Web08.QTKD.Common.Khang\\MISA.Web08.QTKD.Common.Khang.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Viet Khang\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\5.0.0\\microsoft.extensions.configuration.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\Viet Khang\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\5.0.0\\microsoft.extensions.dependencyinjection.5.0.0.nupkg.sha512",
+    "C:\\Users\\Viet Khang\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\5.0.0\\microsoft.extensions.dependencyinjection.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\Viet Khang\\.nuget\\packages\\microsoft.extensions.logging\\5.0.0\\microsoft.extensions.logging.5.0.0.nupkg.sha512",
+    "C:\\Users\\Viet Khang\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\5.0.0\\microsoft.extensions.logging.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\Viet Khang\\.nuget\\packages\\microsoft.extensions.options\\5.0.0\\microsoft.extensions.options.5.0.0.nupkg.sha512",
+    "C:\\Users\\Viet Khang\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.0\\microsoft.extensions.primitives.5.0.0.nupkg.sha512",
+    "C:\\Users\\Viet Khang\\.nuget\\packages\\nlog\\5.0.4\\nlog.5.0.4.nupkg.sha512",
+    "C:\\Users\\Viet Khang\\.nuget\\packages\\nlog.extensions.logging\\5.0.4\\nlog.extensions.logging.5.0.4.nupkg.sha512"
+  ],
   "logs": []
 }

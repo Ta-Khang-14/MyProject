@@ -30,13 +30,16 @@ namespace MISA.Web08.QTKD.API.Khang
         [Route("")]
         public IActionResult Records()
         {
-            var data = _baseBL.Records();
-            if (data != null)
+            ResponseHandle rs = _baseBL.Records(HttpContext.TraceIdentifier);
+
+            // Kiểm tra thực hiện request thành công hay chưa
+            if (rs.IsSuccess)
             {
+                PagingData<T> data = (PagingData<T>)rs.Data;
                 return StatusCode(StatusCodes.Status200OK, data);
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+            return StatusCode(StatusCodes.Status500InternalServerError, rs.ErrorResult);
         }
 
         /// <summary>
@@ -48,14 +51,22 @@ namespace MISA.Web08.QTKD.API.Khang
         [Route("{recordID}")]
         public IActionResult Record([FromRoute] Guid recordID)
         {
-            var data = _baseBL.Record(recordID);
+            ResponseHandle rs = _baseBL.Record(recordID, HttpContext.TraceIdentifier);
 
-            if (data != null)
+            // Kiểm tra thực hiện request thành công hay chưa
+            if (rs.IsSuccess)
             {
-                return StatusCode(StatusCodes.Status200OK, data);
+                T data = (T)rs.Data;
+                return StatusCode(StatusCodes.Status200OK, (T)data);
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, ErrorResult.Generate500Error(HttpContext.TraceIdentifier));
+            // Request thất bại
+            if (rs.Status == 400)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, rs.ErrorResult);
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError, rs.ErrorResult);
 
         }
         #endregion

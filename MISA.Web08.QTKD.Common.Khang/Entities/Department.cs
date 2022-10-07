@@ -4,7 +4,7 @@
     {
         public Guid DepartmentID { get; set; }
 
-        public string DeparmentCode { get; set; }
+        public string DepartmentCode { get; set; }
 
         public string DepartmentName { get; set; }
 

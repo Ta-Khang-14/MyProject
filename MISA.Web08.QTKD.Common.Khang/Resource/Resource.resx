@@ -125,6 +125,10 @@
     <value>An unknown exception</value>
     <comment>Thông báo cho Dev đọc khi gặp 1 lỗi không xác định</comment>
   </data>
+  <data name="DevMsg_GetRecordFailed" xml:space="preserve">
+    <value>Get an record failed</value>
+    <comment>Thông báo cho Dev lấy thông tin 1 bản ghi thất bại</comment>
+  </data>
   <data name="DevMsg_InsertEmployeeFailed" xml:space="preserve">
     <value>Insert a new employee failed</value>
     <comment>Thông báo cho Dev thêm mới 1 nhân viên thất bại</comment>
@@ -144,6 +148,10 @@
   <data name="UserMsg_Exception" xml:space="preserve">
     <value>Có lỗi không xác định xảy ra. Vui lòng liên lạc lại với MISA!</value>
     <comment>Thông báo cho User đọc khi gặp 1 lỗi không xác định</comment>
+  </data>
+  <data name="UserMsg_GetRecordFailed" xml:space="preserve">
+    <value>Lấy thông tin bản ghi thất bại</value>
+    <comment>Thông báo cho User lấy thông tin 1 bản ghi thất bại</comment>
   </data>
   <data name="UserMsg_InsertEmployeeFailed" xml:space="preserve">
     <value>Thêm mới nhân viên thất bại!</value>

@@ -106,7 +106,7 @@ namespace MISA.Web08.QTKD.Common.Khang
                 if (ValidateData<T>.ValidateIsNotNullOrEmpty(property, propertyValue) != "")
                 {
                     errMsg = ValidateData<T>.ValidateIsNotNullOrEmpty(property, propertyValue);
-                    return new ResponseHandle(false, new ErrorResult(
+                    return new ResponseHandle(false, 400, null, new ErrorResult(
                         QTKDErrorCode.NotNullOrEmpty, Resource.DevMsg_Exception, Resource.UserMsg_Exception, errMsg, httpContext)
                     );
                 }
@@ -114,7 +114,7 @@ namespace MISA.Web08.QTKD.Common.Khang
                 if (ValidateData<T>.ValidatePrimaryKey(property, propertyValue) != "")
                 {
                     errMsg = ValidateData<T>.ValidatePrimaryKey(property, propertyValue);
-                    return new ResponseHandle(false, new ErrorResult(
+                    return new ResponseHandle(false, 400, null, new ErrorResult(
                         QTKDErrorCode.InvalidID, Resource.DevMsg_Exception, Resource.UserMsg_Exception, errMsg, httpContext)
                     );
                 }
@@ -122,7 +122,7 @@ namespace MISA.Web08.QTKD.Common.Khang
                 if (ValidateData<T>.ValidateIsEmail(property, propertyValue) != "")
                 {
                     errMsg = ValidateData<T>.ValidateIsEmail(property, propertyValue);
-                    return new ResponseHandle(false, new ErrorResult(
+                    return new ResponseHandle(false, 400, null, new ErrorResult(
                         QTKDErrorCode.EmailInvalid, Resource.DevMsg_Exception, Resource.UserMsg_Exception, errMsg, httpContext)
                     );
                 }
@@ -130,14 +130,14 @@ namespace MISA.Web08.QTKD.Common.Khang
                 if (ValidateData<T>.ValidateIsEmployeeCode(property, propertyValue) != "")
                 {
                     errMsg = ValidateData<T>.ValidateIsEmployeeCode(property, propertyValue);
-                    return new ResponseHandle(false, new ErrorResult(
+                    return new ResponseHandle(false, 400, null, new ErrorResult(
                         QTKDErrorCode.EmailInvalid, Resource.DevMsg_Exception, Resource.UserMsg_Exception, errMsg, httpContext)
                     );
                 }
             }
 
 
-            return new ResponseHandle(true, null);
+            return new ResponseHandle(true, 200, null, null);
 
         }
 

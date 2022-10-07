@@ -1,5 +1,6 @@
 ﻿using MISA.Web08.QTKD.Common.Khang;
 using MISA.Web08.QTKD.DL.Khang;
+using System.Text;
 
 namespace MISA.WEB08.QTKD.BL.Khang
 {
@@ -27,9 +28,9 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// Lấy mã nhân viên lơn nhất
         /// </summary>
         /// <returns></returns>
-        public string MaxCodeEmployee()
+        public ResponseHandle MaxCodeEmployee(string traceID)
         {
-            return _employeeDL.MaxCodeEmployee();
+            return _employeeDL.MaxCodeEmployee(traceID);
         }
 
         /// <summary>
@@ -38,9 +39,9 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// <param name="employeeID">Mã nhân viên cần xóa</param>
         /// <returns>Mã nhân viên đã xóa</returns>
         /// Created by: TVKhang(29/09/22)
-        public Guid DeleteEmployee(Guid employeeID)
+        public ResponseHandle DeleteEmployee(Guid employeeID, string traceID)
         {
-            return _employeeDL.DeleteEmployee(employeeID);
+            return _employeeDL.DeleteEmployee(employeeID, traceID);
         }
 
         /// <summary>
@@ -52,9 +53,9 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// <param name="limit">Số lượng bản ghi muốn lấy</param>
         /// <returns>Danh sách nhân viên</returns>
         /// Created by: TVKhang(29/09/22)
-        public PagingData<Employee> EmployeesFilter(string? keyword, string? sort, int? offset, int? limit)
+        public ResponseHandle EmployeesFilter(string? keyword, string? sort, int? offset, int? limit, string traceID)
         {
-            return _employeeDL.EmployeesFilter(keyword, sort, offset, limit);
+            return _employeeDL.EmployeesFilter(keyword, sort, offset, limit, traceID);
         }
 
         /// <summary>
@@ -63,9 +64,50 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// <param name="employee">Thông tin nhân viên cần thêm mới</param>
         /// <returns>ID nhân viên mới</returns>
         /// Created by: TVKhang(29/09/22)
-        public Guid InsertEmployee(Employee employee)
+        public ResponseHandle InsertEmployee(Employee employee, string traceID)
         {
-            return _employeeDL.InsertEmployee(employee);
+            // Tạo 1 ID cho nhân viên mới
+            employee.EmployeeID = Guid.NewGuid();
+
+            // Kiểm tra đã tồn tại ID nhân viên hay chưa
+            ResponseHandle rs;
+            rs = _employeeDL.Record(employee.EmployeeID, traceID);
+
+            // Kiểm tra xem mã nhân viên dã tồn tại hay chưa, nếu tồn tại tạo lại mã nhân viên
+            while (rs.IsSuccess)
+            {
+                employee.EmployeeID = Guid.NewGuid();
+                rs = _employeeDL.Record(employee.EmployeeID, traceID);
+            }
+
+
+            // Kiểm tra mã nhân viên đã tồn tại hay chưa
+            rs = _employeeDL.EmployeesFilter(employee.EmployeeCode, null, 0, 10, traceID);
+
+            if (rs.IsSuccess)
+            {
+                PagingData<Employee> data = (PagingData<Employee>)rs.Data;
+
+                // Nếu mã nhân viên đã tồn tại
+                if (data.TotalCount > 0)
+                {
+                    return new ResponseHandle(
+                            false, 400, null,
+                            new ErrorResult(
+                                QTKDErrorCode.DupplicateCode,
+                                Resource.DevMsg_InsertEmployeeFailed,
+                                Resource.UserMsg_InsertEmployeeFailed,
+                                "Mã nhân viên đã tồn tại",
+                                traceID
+                                )
+                        );
+                }
+            }
+
+            string codeNumber = employee.EmployeeCode.Replace("NV-", "");
+            employee.EmployeeCodeNumber = codeNumber;
+
+            return _employeeDL.InsertEmployee(employee, traceID);
         }
 
         /// <summary>
@@ -74,11 +116,38 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// <param name="employee"></param>
         /// <returns>Mã nhân viên đã được cập nhật</returns>
         /// Created by: TVKhang(29/09/22)
-        public Guid UpdateEmployee(Guid employeeID, Employee employee)
+        public ResponseHandle UpdateEmployee(Guid employeeID, Employee employee, string traceID)
         {
-            string code = employee.EmployeeCode;
-            employee.EmployeeCodeNumber = code.Replace("NV-", "");
-            return _employeeDL.UpdateEmployee(employeeID, employee);
+            // Kiểm tra mã nhân viên đã tồn tại hay chưa
+            ResponseHandle rs;
+
+            string employeeCodeQuery = $"EmployeeCode='{employee.EmployeeCode}'";
+            rs = _employeeDL.EmployeesFilter(employeeCodeQuery, null, 0, 10, traceID);
+
+            if (rs.IsSuccess)
+            {
+                PagingData<Employee> data = (PagingData<Employee>)rs.Data;
+
+                // Nếu mã nhân viên đã tồn tại
+                if (data.TotalCount > 1)
+                {
+                    return new ResponseHandle(
+                            false, 400, null,
+                            new ErrorResult(
+                                QTKDErrorCode.DupplicateCode,
+                                Resource.DevMsg_InsertEmployeeFailed,
+                                Resource.UserMsg_InsertEmployeeFailed,
+                                "Mã nhân viên đã tồn tại",
+                                traceID
+                                )
+                        );
+                }
+            }
+            string codeNumber = employee.EmployeeCode.Replace("NV-", "");
+            employee.EmployeeCodeNumber = codeNumber;
+            employee.IsActive = employee.IsActive != null ? employee.IsActive : true;
+
+            return _employeeDL.UpdateEmployee(employeeID, employee, traceID);
         }
 
         /// <summary>
@@ -86,9 +155,27 @@ namespace MISA.WEB08.QTKD.BL.Khang
         /// </summary>
         /// <param name="listEmployeeIDs">Danh sách ID nhân viên cần xóa</param>
         /// <returns>Số lượng nhân viên đã xóa</returns>
-        public int DeleteEmployees(List<Guid> listEmployeeIDs)
+        public ResponseHandle DeleteEmployees(List<Guid> listEmployeeIDs, string traceID)
         {
-            return _employeeDL.DeleteEmployees(listEmployeeIDs);
+            if (listEmployeeIDs != null)
+            {
+                // Chuyển list employee id thành chuỗi string
+                StringBuilder listString = new StringBuilder();
+
+                foreach (Guid employeeID in listEmployeeIDs)
+                {
+                    listString.Append(employeeID.ToString() + ",");
+                }
+                listString.Length--;
+
+                return _employeeDL.DeleteEmployees(listString.ToString(), traceID);
+            }
+            return new ResponseHandle(false, 400, null, new ErrorResult(
+                QTKDErrorCode.DataInputInvalid,
+                Resource.DevMsg_DeleteEmployeeFailed,
+                Resource.UserMsg__DeleteEmployeeFailed,
+                Resource.MoreInfor_DeleteEmployeeFailed,
+                traceID));
         }
         #endregion
 
