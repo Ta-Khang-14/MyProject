@@ -26,6 +26,27 @@ namespace MISA.Web08.QTKD.Common.Khang
         }
 
         /// <summary>
+        /// Validate những thuộc tính có Attribute là IsValidDate
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="propertyValue"></param>
+        /// <returns>Chuỗi string thể hiện lỗi</returns>
+        /// Created by: TVKhang(30/09/22)
+        public static string ValidateIsValidDate(PropertyInfo property, object propertyValue)
+        {
+            if (propertyValue != "" && propertyValue != null)
+            {
+                var isNotNullOrEmptyAttr = (IsValidDate?)Attribute.GetCustomAttribute(property, typeof(IsValidDate));
+
+                if (isNotNullOrEmptyAttr != null && DateTime.Compare(DateTime.Now, (DateTime)propertyValue) < 0)
+                {
+                    return isNotNullOrEmptyAttr.ErrorMessage;
+                }
+            }
+            return "";
+        }
+
+        /// <summary>
         /// Validate những thuộc tính có Attribute là IsEmployeeCode
         /// </summary>
         /// <param name="property"></param>
@@ -132,6 +153,15 @@ namespace MISA.Web08.QTKD.Common.Khang
                     errMsg = ValidateData<T>.ValidateIsEmployeeCode(property, propertyValue);
                     return new ResponseHandle(false, 400, null, new ErrorResult(
                         QTKDErrorCode.EmailInvalid, Resource.DevMsg_Exception, Resource.UserMsg_Exception, errMsg, httpContext)
+                    );
+                }
+
+
+                if (ValidateData<T>.ValidateIsValidDate(property, propertyValue) != "")
+                {
+                    errMsg = ValidateData<T>.ValidateIsValidDate(property, propertyValue);
+                    return new ResponseHandle(false, 400, null, new ErrorResult(
+                        QTKDErrorCode.InvalidDate, Resource.DevMsg_Exception, Resource.UserMsg_Exception, errMsg, httpContext)
                     );
                 }
             }

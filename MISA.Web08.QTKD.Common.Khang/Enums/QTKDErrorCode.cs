@@ -40,6 +40,11 @@
         /// <summary>
         /// Trùng ID
         /// </summary>
-        DuplicateID = 7
+        DuplicateID = 7,
+
+        /// <summary>
+        /// Ngày tháng không hợp lệ
+        /// </summary>
+        InvalidDate = 8
     }
 }

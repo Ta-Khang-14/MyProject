@@ -31,6 +31,7 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("max-code")]
+        [Produces("application/json")]
         public IActionResult MaxCodeEmployee()
         {
             ResponseHandle res = _employeeBL.MaxCodeEmployee(HttpContext.TraceIdentifier);
@@ -38,8 +39,8 @@ namespace MISA.Web08.QTKD.API.Khang.Controllers
             // Kiểm tra xem request đã thành công hay chưa
             if (res.IsSuccess)
             {
-                string data = res.Data.ToString();
-                return StatusCode(StatusCodes.Status200OK, "NV-" + data);
+                string data = "NV-" + res.Data.ToString();
+                return StatusCode(StatusCodes.Status200OK, data);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, res.ErrorResult);
         }

@@ -54,4 +54,14 @@
         {
         }
     }
+
+    /// <summary>
+    /// Xác định xem trường date có vượt qua ngày hiện tại hay không
+    /// </summary>
+    public class IsValidDate : BaseValidateAttribute
+    {
+        public IsValidDate(string errorMessage) : base(errorMessage)
+        {
+        }
+    }
 }

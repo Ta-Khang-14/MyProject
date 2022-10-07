@@ -38,6 +38,7 @@ namespace MISA.Web08.QTKD.Common.Khang
         /// <summary>
         /// Ngày sinh
         /// </summary>
+        [IsValidDate("Thời gian không được quá ngày hiện tại")]
         public DateTime? DateOfBirth { get; set; }
 
         /// <summary>
@@ -68,6 +69,7 @@ namespace MISA.Web08.QTKD.Common.Khang
         /// <summary>
         /// Ngày cấp CMND
         /// </summary>
+        [IsValidDate("Thời gian không được quá ngày hiện tại")]
         public DateTime? IdentityDate { get; set; }
 
         /// <summary>
