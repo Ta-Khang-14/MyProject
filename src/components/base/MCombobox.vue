@@ -3,7 +3,11 @@
         <input
             type="text"
             placeholder="- None -"
-            :class="{ clicked: isShowDataList }"
+            :class="{
+                clicked: isShowDataList,
+                input__value: hasError,
+                'input--error': hasError,
+            }"
             @input="filterData"
             v-model="textInput"
             class="cbx__input"
@@ -50,6 +54,8 @@ export default {
     },
     data() {
         return {
+            hasError: false,
+            msg: "",
             listDataFilter: [],
             currentItem: {},
             textInput: "",
@@ -62,6 +68,7 @@ export default {
         // Author: TVKhang(12/09/22)
         showDataList() {
             this.isShowDataList = !this.isShowDataList;
+            this.hasError = false;
         },
 
         // Xử lý sự kiện click vào cbx data item

@@ -10,7 +10,11 @@ const EnumMisa = {
         Female: 1, // Nữ
         Other: 2, // Khác
     },
-
+    TypeOfCustomer: {
+        Customer: 0, // Là khách hàng
+        Vendor: 1, // Là nhà cung cấp
+        CustomerAndVendor: 2, // Là khách hàng và nhà cung cấp
+    },
     // Enum các hành động của form
     FormMode: {
         New: 0, // Thêm mới
@@ -49,7 +53,7 @@ const EnumMisa = {
         Required: 1, // Trường bắt buộc nhập
         Email: 2, // Trường là email
         EmployeeCode: 3, // Trường là mã nhân viên
-        StringUTF8: 4, // Trường là chuỗi
+        Date: 4, // Validate ngày tháng
         Number: 5, // Trường là số
     },
 };

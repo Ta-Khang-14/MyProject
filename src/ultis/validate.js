@@ -16,8 +16,8 @@ function validate(data, action) {
                 return validateEmail(data);
             case EnumMisa.Validate.EmployeeCode:
                 return validateEmployeeCode(data);
-            case EnumMisa.Validate.StringUTF8:
-                return validateString(data);
+            case EnumMisa.Validate.Date:
+                return validateDate(data);
             case EnumMisa.Validate.Number:
                 return validateNumber(data);
         }
@@ -73,27 +73,6 @@ function validateEmployeeCode(data) {
     };
 }
 
-// Validate dữ liệu có phải là chuỗi ký tự hợp lệ
-function validateString(data) {
-    data = data.trim();
-    if (data != "") {
-        if (
-            !/^[a-zA-Z0-9-,\s_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,255}$/.test(
-                data
-            )
-        ) {
-            return {
-                status: false,
-                msg: "Sai định dạng",
-                data,
-            };
-        }
-    }
-    return {
-        status: true,
-    };
-}
-
 // Validate dữ liệu có phải là số
 function validateNumber(data) {
     data = data.trim();
@@ -104,6 +83,20 @@ function validateNumber(data) {
                 msg: "Sai định dạng",
             };
         }
+    }
+    return {
+        status: true,
+    };
+}
+
+// validate ngày tháng năm không lớn hơn ngày hiện tại
+function validateDate(data) {
+    data = new Date(data);
+    if (data > new Date()) {
+        return {
+            status: false,
+            msg: "Thời gian không được vượt quá thời gian hiện tại",
+        };
     }
     return {
         status: true,

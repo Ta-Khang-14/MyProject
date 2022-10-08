@@ -1,7 +1,7 @@
 .main {
     height: calc(100vh - 56px);
     width: 100%;
-    padding: 24px;
+    padding: 8px 16px;
 }
 .main--function {
     justify-content: space-between;

@@ -6,13 +6,14 @@
     position: absolute;
     left: 12px;
     right: 12px;
-    bottom: -10px;
-    height: 20px;
+    top: 84%;
+    min-height: 20px;
     background-color: var(--input-err-background);
     color: var(--color-white);
     line-height: 20px;
     padding: 0px 8px;
     text-align: center;
+    z-index: 10;
 }
 .input__field:hover .input__msg {
     display: block;

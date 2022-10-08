@@ -10,6 +10,7 @@
 @import url(./components/combobox.css);
 @import url(./components/droplist.css);
 @import url(./components/input.css);
+@import url(./components/tooltip.css);
 
 * {
     font-family: MISA Fonts;
@@ -23,6 +24,8 @@
     font-size: 13px;
     line-height: 16px;
     color: var(--color-black);
+
+    text-decoration: none;
 }
 
 body {

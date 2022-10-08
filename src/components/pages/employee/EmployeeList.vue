@@ -12,11 +12,8 @@
         </div>
         <div class="main__table">
             <div class="main__table--search flex">
-                <div class="main__table--action">
-                    <div
-                        class="main_table--actionDisplay"
-                        @click="showDeleteAll"
-                    >
+                <div class="main__table--action" @click="showDeleteAll">
+                    <div class="main_table--actionDisplay">
                         Thực hiện hàng loạt
                     </div>
                     <div class="main_table--actionIcon">
@@ -37,6 +34,7 @@
                             v-model="filterEmployee"
                             type="text"
                             placeholder="Tìm theo mã, tên nhân viên"
+                            @keydown="filterEmployeeKeyEvent($event)"
                         />
                         <div
                             class="input--icon icon icon--search"
@@ -122,6 +120,7 @@
         @updateEmp="updateEmployeeById"
         @createEmp="createEmployee"
         @showFormAddEmployee="showFormAddEmployee"
+        ref="employeeDetail"
     />
     <m-drop-list
         :postionDropList="postionDropList"
@@ -149,7 +148,7 @@ import MCombobox from "@/components/base/MCombobox.vue";
 
 import fetchAPI from "@/ultis/fetchAPI.js";
 import EnumMisa from "@/ultis/enum.js";
-import { simpleFormatString } from "@/ultis/format.js";
+import { simpleFormatString, handleRecordCode } from "@/ultis/format.js";
 import pagination from "@/ultis/pagination.js";
 export default {
     components: { EmployeeDetail, MTable, MDropList, MPopup, MCombobox },
@@ -197,9 +196,14 @@ export default {
     methods: {
         // Xử lý sự hiện hiện form thêm mới nhân viên
         // Author: TVKHANG(11/09/22)
-        showFormAddEmployee() {
+        async showFormAddEmployee() {
             this.isShowDetail = true;
             this.selectedEmployeeId = "";
+            // Truyền mã code mới
+            let employeeCode = await this.getMaxCode();
+            employeeCode = handleRecordCode(employeeCode, "NV-");
+
+            this.$refs.employeeDetail.employee.employeeCode = employeeCode;
         },
 
         // Xủ lý sự kiện ẩn form thêm mới nhân viên
@@ -211,7 +215,13 @@ export default {
             this.cancelPopup(data);
             this.hiddenForm();
         },
-
+        // Lấy mã nhân viên lớn nhất từ serve
+        async getMaxCode() {
+            let code = await fetchAPI(
+                `${process.env.VUE_APP_URL}/Employees/max-code`
+            );
+            return code;
+        },
         // Bắt sự kiện mở form chỉnh sửa nhân viên và xử lý
         // Author: TVKhang 12/09/22
         showFormEditEmployee(data) {
@@ -307,6 +317,14 @@ export default {
                 `${process.env.VUE_APP_URL}/Employees/filter?keyword=${this.filterEmployee}`
             );
         },
+
+        // Bắt sự kiện keyup trong input tìm kiếm nhân viên
+        filterEmployeeKeyEvent(e) {
+            if (e.keyCode == EnumMisa.KeyCode.Enter) {
+                this.getFilterEmployee();
+            }
+        },
+
         // Bắt sự kiện click trang
         changePage(item, index) {
             if (Number.isInteger(item)) {
@@ -365,7 +383,7 @@ export default {
     // Author: TVKHANG(11/09/22)
     async created() {
         this.employees = await fetchAPI(
-            `${process.env.VUE_APP_URL}/Employees/filter?offset=0&limit=10`
+            `${process.env.VUE_APP_URL}/Employees/filter?offset=0&limit=10&keyword=${this.filterEmployee}`
         );
         this.handlePagination();
     },
@@ -375,7 +393,9 @@ export default {
                 `${process.env.VUE_APP_URL}/Employees/filter?offset=${
                     (this.pagination.currentPage - 1) *
                     this.pagination.recordPerPage
-                }&limit=${this.pagination.recordPerPage}`
+                }&limit=${this.pagination.recordPerPage}&keyword=${
+                    this.filterEmployee
+                }`
             );
         },
 
@@ -384,8 +404,14 @@ export default {
                 `${process.env.VUE_APP_URL}/Employees/filter?offset=${
                     (this.pagination.currentPage - 1) *
                     this.pagination.recordPerPage
-                }&limit=${this.pagination.recordPerPage}`
+                }&limit=${this.pagination.recordPerPage}&keyword=${
+                    this.filterEmployee
+                }`
             );
+            this.handlePagination();
+        },
+
+        employees() {
             this.handlePagination();
         },
     },

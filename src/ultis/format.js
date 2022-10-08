@@ -27,4 +27,17 @@ function simpleFormatString(data) {
         return "";
     }
 }
-export { formatTime, simpleFormatString };
+
+// Xử lý mã code được trả về từ server
+function handleRecordCode(data, prefix) {
+    data = data.replaceAll(prefix, "");
+    let length = data.length;
+    data = +data + 1 + "";
+    data =
+        length - data.length > 0
+            ? prefix + "0".repeat(length - data.length) + data
+            : prefix + data;
+    return data;
+}
+
+export { formatTime, simpleFormatString, handleRecordCode };

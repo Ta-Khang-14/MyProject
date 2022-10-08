@@ -141,6 +141,12 @@
                                 "
                                 ref="cbx_department"
                             />
+                            <div
+                                class="input__msg"
+                                v-if="!this.validate[2].status"
+                            >
+                                {{ this.validate[2].msg }}
+                            </div>
                         </div>
                     </div>
                     <div class="data__field flex cl--6">
@@ -157,12 +163,12 @@
                             />
                         </div>
                         <div class="input__field cl--6">
-                            <div class="label">Ngày cấp</div>
-                            <input
+                            <m-input
+                                label="Ngày cấp"
                                 ref="IdentityDate"
                                 tabIndex="10"
                                 type="date"
-                                :value="
+                                :defaultValue="
                                     formatTime(
                                         employee ? employee.identityDate : ''
                                     ) || ''
@@ -353,10 +359,13 @@ export default {
                 },
                 {
                     name: "EmployeeName",
-                    required: [
-                        EnumMisa.Validate.Required,
-                        EnumMisa.Validate.StringUTF8,
-                    ],
+                    required: [EnumMisa.Validate.Required],
+                    status: true,
+                    msg: "",
+                },
+                {
+                    name: "cbx_department",
+                    required: [EnumMisa.Validate.Required],
                     status: true,
                     msg: "",
                 },
@@ -367,44 +376,14 @@ export default {
                     msg: "",
                 },
                 {
-                    name: "IdentityPlace",
-                    required: [EnumMisa.Validate.StringUTF8],
+                    name: "DateOfBirth",
+                    required: [EnumMisa.Validate.Date],
                     status: true,
                     msg: "",
                 },
                 {
-                    name: "PositionName",
-                    required: [EnumMisa.Validate.StringUTF8],
-                    status: true,
-                    msg: "",
-                },
-                {
-                    name: "EmployeeAddress",
-                    required: [EnumMisa.Validate.StringUTF8],
-                    status: true,
-                    msg: "",
-                },
-                {
-                    name: "LandlineNumber",
-                    required: [EnumMisa.Validate.StringUTF8],
-                    status: true,
-                    msg: "",
-                },
-                {
-                    name: "BankNumber",
-                    required: [EnumMisa.Validate.StringUTF8],
-                    status: true,
-                    msg: "",
-                },
-                {
-                    name: "BankName",
-                    required: [EnumMisa.Validate.StringUTF8],
-                    status: true,
-                    msg: "",
-                },
-                {
-                    name: "BankBranch",
-                    required: [EnumMisa.Validate.StringUTF8],
+                    name: "IdentityDate",
+                    required: [EnumMisa.Validate.Date],
                     status: true,
                     msg: "",
                 },
@@ -474,7 +453,13 @@ export default {
 
             // Lấy dữ liệu vào validate
             this.validate.forEach((e) => {
-                e.value = this.$refs[e["name"]].value;
+                if (
+                    this.$refs[e["name"]].value ||
+                    this.$refs[e["name"]].value == ""
+                ) {
+                    console.log(name);
+                    e.value = this.$refs[e["name"]].value;
+                }
             });
             validateHandle(this.validate);
 
