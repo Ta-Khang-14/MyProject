@@ -1,5 +1,6 @@
 <template>
     <table>
+        <m-tooltip :isShow="isShowTooltip" :data="tooltipData" />
         <thead>
             <tr>
                 <th>
@@ -15,12 +16,24 @@
                 <th class="text--left">tên nhân viên</th>
                 <th class="text--left">giới tính</th>
                 <th class="text--center">ngày sinh</th>
-                <th class="text--left">số cmnnd</th>
+                <th
+                    class="text--left"
+                    @mouseleave="hiddenTooltip"
+                    @mouseover="showTooltip($event, 'Số chứng minh nhân dân')"
+                >
+                    số cmnnd
+                </th>
                 <th class="text--left">chức danh</th>
                 <th class="text--left">tên đơn vị</th>
                 <th class="text--left">số tài khoản</th>
                 <th class="text--left">tên ngân hàng</th>
-                <th class="text--left">chi nhánh tk ngân hàng</th>
+                <th
+                    class="text--left"
+                    @mouseleave="hiddenTooltip"
+                    @mouseover="showTooltip($event, 'Tên chi nhánh ngân hàng')"
+                >
+                    chi nhánh tk ngân hàng
+                </th>
                 <th class="text--center">chức năng</th>
             </tr>
         </thead>
@@ -96,7 +109,11 @@
 
 <script>
 import EnumMisa from "@/ultis/enum.js";
+import MTooltip from "@/components/base/MTooltip.vue";
 export default {
+    components: {
+        MTooltip,
+    },
     props: {
         employees: {
             type: Array,
@@ -122,9 +139,36 @@ export default {
             },
             isCheckedAll: false,
             listSelectedEmployee: [],
+
+            tooltipData: {},
+            isShowTooltip: false,
         };
     },
     methods: {
+        /**
+         * Sự kiện hiện tooltip
+         * Created: TVKhang(08/10/2022)
+         */
+        showTooltip(e, msg) {
+            this.isShowTooltip = true;
+
+            this.tooltipData = {
+                x: e.pageX - 16 - 178,
+                y: e.pageY - 56 - 8 - 32,
+                with: e.target.offsetWidth,
+                height: e.target.offsetHeight,
+                msg,
+            };
+        },
+
+        /**
+         * Sự kiện ẩn tooltip
+         * Created: TVKhang(08/10/2022)
+         */
+        hiddenTooltip() {
+            this.isShowTooltip = false;
+        },
+
         // Xử lý sự kiện mở tùy chọn
         // Author: TVKhang 12/09/22
         clickBtnEdit(e, index, employeeId, employeeCode) {

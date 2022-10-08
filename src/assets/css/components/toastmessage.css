@@ -1,0 +1,32 @@
+.toastMessage {
+    height: 40px;
+    border-radius: 4px;
+    position: absolute;
+    right: 10%;
+    background-color: var(--toast-infor-color);
+    top: 6%;
+    align-items: center;
+    padding: 12px;
+}
+
+.toastMessage .toastMessage__content {
+    color: var(--color-white);
+    padding: 0px 16px;
+}
+.toastMessage .toastMessage__icon .icon {
+    display: none;
+}
+.toastMessage.success .toastMessage__icon .icon__toast--success {
+    display: block;
+}
+
+.toastMessage.danger .toastMessage__icon .icon__toast--danger {
+    display: block;
+}
+
+.toastMessage.success {
+    background-color: var(--toast-success-color);
+}
+.toastMessage.danger {
+    background-color: var(--toast-danger-color);
+}

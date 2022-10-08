@@ -11,6 +11,7 @@
 @import url(./components/droplist.css);
 @import url(./components/input.css);
 @import url(./components/tooltip.css);
+@import url(./components/toastmessage.css);
 
 * {
     font-family: MISA Fonts;

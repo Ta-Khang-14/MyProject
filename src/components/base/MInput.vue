@@ -1,6 +1,8 @@
 <template>
     <div class="label" v-if="labelRequired">{{ labelRequired }}<b>*</b></div>
-    <div class="label" v-if="label">{{ label }}</div>
+    <div class="label" v-if="label">
+        {{ label }}
+    </div>
     <input
         :tabindex="tabIndex"
         class="input__value"
@@ -67,6 +69,22 @@ export default {
          */
         focus() {
             this.$refs.input.focus();
+        },
+
+        /**
+         * Bắt sự kiện hover vào label input
+         * Created: TVKhang(07/10/2022)
+         */
+        mouseleaveLabel() {
+            this.$emit("mouseleaveLabel");
+        },
+
+        /**
+         * Bắt sự kiện rê chuột khỏi label input
+         * Created: TVKhang(07/10/2022)
+         */
+        mouseoverLabel() {
+            this.$emit("mouseoverLabel");
         },
     },
     watch: {

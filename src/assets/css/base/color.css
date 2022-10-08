@@ -20,4 +20,11 @@
     --button-gray-hover: #eeeeee;
 
     --menu-item-hover-color: #4d646f;
+
+    --tooltip-bg-color: #424242;
+
+    --toast-infor-color: #4262f0;
+    --toast-warning-color: #f07d42;
+    --toast-success-color: #31b491;
+    --toast-danger-color: #ec4141;
 }

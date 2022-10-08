@@ -56,6 +56,12 @@ const EnumMisa = {
         Date: 4, // Validate ngày tháng
         Number: 5, // Trường là số
     },
+
+    // Enum thông tin Toast Message
+    Toast: {
+        Success: 1,
+        Danger: 2,
+    },
 };
 
 export default EnumMisa;

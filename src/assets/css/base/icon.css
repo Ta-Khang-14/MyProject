@@ -88,8 +88,23 @@
 .icon--refresh {
     background-position: -1096px -88px;
 }
+.icon__refresh--blue {
+    background-position: -1096px -144px;
+}
 .icon--excel {
     background-position: -1265px -88px;
+}
+.icon__excel--blue {
+    background-position: -1265px -144px;
+}
+.icon__toast--success {
+    background-position: -1285px -404px;
+}
+.icon__cancel--small {
+    background-position: -1316px -355px;
+}
+.icon__toast--danger {
+    background-position: -1932px -201px;
 }
 .icon__arrowDown--bold {
     background: url("../../Resource/img/Sprites.64af8f61.svg") no-repeat;

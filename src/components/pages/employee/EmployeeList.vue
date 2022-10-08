@@ -29,6 +29,7 @@
                     </div>
                 </div>
                 <div class="flex">
+                    <m-tooltip :isShow="isShowTooltip" :data="tooltipData" />
                     <div class="input input__icon">
                         <input
                             v-model="filterEmployee"
@@ -41,12 +42,23 @@
                             @click="getFilterEmployee"
                         ></div>
                     </div>
-                    <div class="main__table--refresh flex" @click="reload">
+                    <div
+                        class="main__table--refresh flex"
+                        @click="reload"
+                        @mouseleave="hiddenTooltip"
+                        @mouseover="showTooltip($event, 'Lấy lại dữ liệu')"
+                    >
                         <div class="icon icon--refresh"></div>
+                        <div class="icon icon__refresh--blue"></div>
                     </div>
-                    <div class="main__table--refresh flex">
+                    <div
+                        class="main__table--refresh flex"
+                        @mouseleave="hiddenTooltip"
+                        @mouseover="showTooltip($event, 'Xuất ra file excel')"
+                    >
                         <a :href="excelExportLink">
                             <div class="icon icon--excel"></div>
+                            <div class="icon icon__excel--blue"></div>
                         </a>
                     </div>
                 </div>
@@ -112,6 +124,7 @@
                 </div>
             </div>
         </div>
+        <m-toast-message ref="toast" />
     </div>
     <employee-detail
         v-if="isShowDetail"
@@ -145,13 +158,23 @@ import MTable from "../../base/MTable.vue";
 import MDropList from "@/components/base/MDroplist.vue";
 import MPopup from "@/components/base/MPopup.vue";
 import MCombobox from "@/components/base/MCombobox.vue";
+import MTooltip from "@/components/base/MTooltip.vue";
+import MToastMessage from "@/components/base/MToastMessage.vue";
 
 import fetchAPI from "@/ultis/fetchAPI.js";
 import EnumMisa from "@/ultis/enum.js";
 import { simpleFormatString, handleRecordCode } from "@/ultis/format.js";
 import pagination from "@/ultis/pagination.js";
 export default {
-    components: { EmployeeDetail, MTable, MDropList, MPopup, MCombobox },
+    components: {
+        EmployeeDetail,
+        MTable,
+        MDropList,
+        MPopup,
+        MCombobox,
+        MTooltip,
+        MToastMessage,
+    },
     data() {
         return {
             isShowDetail: false,
@@ -165,6 +188,7 @@ export default {
                 x: 0,
                 y: 0,
             },
+
             isShowDropList: false,
             isShowPopup: false,
             popupData: {
@@ -173,6 +197,7 @@ export default {
                 action: 0,
                 data: {},
             },
+
             pagination: {
                 currentPage: 1,
                 recordPerPage: 10,
@@ -190,6 +215,10 @@ export default {
                 { value: 50, name: "50 bản ghi trên 1 trang" },
                 { value: 100, name: "100 bản ghi trên 1 trang" },
             ],
+
+            tooltipData: {},
+            isShowTooltip: false,
+
             excelExportLink: `${process.env.VUE_APP_URL}/Employees/exportEmployees`,
         };
     },
@@ -377,6 +406,46 @@ export default {
             );
 
             await this.reload();
+        },
+
+        /**
+         * Sự kiện hiện tooltip
+         * Created: TVKhang(08/10/2022)
+         */
+        showTooltip(e, msg) {
+            this.isShowTooltip = true;
+
+            this.tooltipData = {
+                x: e.pageX - 16 - 280,
+                y: e.pageY - 56 - 8 - 32,
+                with: e.target.offsetWidth,
+                height: e.target.offsetHeight,
+                msg,
+            };
+        },
+
+        /**
+         * Sự kiện ẩn tooltip
+         * Created: TVKhang(08/10/2022)
+         */
+        hiddenTooltip() {
+            this.isShowTooltip = false;
+        },
+
+        /**
+         * Hiện toast message
+         * CreatedBy: TVKhang(08/10/2022)
+         */
+        showToast(msg, status) {
+            this.$refs["toast"].isShowToast = true;
+
+            // Tự động ẩn toast sau 3s
+            setTimeout(() => {
+                this.$refs["toast"].isShowToast = true;
+            }, 3000);
+
+            this.$$refs["toast"].data.msg = msg;
+            this.$$refs["toast"].data.status = status;
         },
     },
     // Gọi dữ liệu từ API

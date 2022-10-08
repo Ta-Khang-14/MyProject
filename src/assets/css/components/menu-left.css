@@ -23,8 +23,9 @@
 .menu__list {
     width: 178px;
     padding: 16px 0;
-    overflow: auto;
+    overflow-y: auto;
     height: calc(100% - 72px);
+    position: relative;
 }
 
 /* MENU LIST ITEM*/

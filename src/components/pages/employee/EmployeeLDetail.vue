@@ -5,23 +5,52 @@
         @keydown="handleEnventKeyDown($event)"
     >
         <div class="dialog__form">
+            <m-tooltip :isShow="isShowTooltip" :data="tooltipData" />
+
             <div class="dialog__header flex">
                 <div class="dialog__header--title flex">
                     <div class="title">Thông tin nhân viên</div>
                     <div class="option flex">
                         <div class="input__field flex">
-                            <input type="checkbox" id="customer" />
+                            <input
+                                type="checkbox"
+                                id="customer"
+                                :checked="
+                                    employee.typeOfCustomer ==
+                                        typeOfCustomer.Customer ||
+                                    employee.typeOfCustomer ==
+                                        typeOfCustomer.CustomerAndVendor
+                                "
+                            />
                             <label for="customer">Là khách hàng</label>
                         </div>
                         <div class="input__field flex">
-                            <input type="checkbox" id="vendor" />
+                            <input
+                                type="checkbox"
+                                id="vendor"
+                                :checked="
+                                    employee.typeOfCustomer ==
+                                        typeOfCustomer.Vendor ||
+                                    employee.typeOfCustomer ==
+                                        typeOfCustomer.CustomerAndVendor
+                                "
+                            />
                             <label for="vendor">Là nhà cung cấp</label>
                         </div>
                     </div>
                 </div>
                 <div class="dialog__header--icon flex">
-                    <div class="icon icon--infor"></div>
-                    <div class="icon icon--close" @click="hiddenForm"></div>
+                    <div
+                        class="icon icon--infor"
+                        @mouseleave="hiddenTooltip"
+                        @mouseover="showTooltip($event, 'Trợ giúp(F1)')"
+                    ></div>
+                    <div
+                        class="icon icon--close"
+                        @click="hiddenForm"
+                        @mouseleave="hiddenTooltip"
+                        @mouseover="showTooltip($event, 'Thoát (ESC)')"
+                    ></div>
                 </div>
             </div>
             <div class="dialog__body">
@@ -151,9 +180,20 @@
                     </div>
                     <div class="data__field flex cl--6">
                         <div class="input__field cl--6">
+                            <div
+                                class="label"
+                                @mouseleave="hiddenTooltip"
+                                @mouseover="
+                                    showTooltip(
+                                        $event,
+                                        'Số chứng minh nhân dân'
+                                    )
+                                "
+                            >
+                                Số CMND
+                            </div>
                             <m-input
                                 tabIndex="9"
-                                label="Số CMND"
                                 type="text"
                                 ref="IdentityNumber"
                                 placeholder="Nhập số CMND"
@@ -226,9 +266,17 @@
                 <div class="row">
                     <div class="data__field flex cl--12">
                         <div class="input__field">
+                            <div
+                                class="label"
+                                @mouseleave="hiddenTooltip"
+                                @mouseover="
+                                    showTooltip($event, 'Số điện thoại di động')
+                                "
+                            >
+                                Số ĐT di động
+                            </div>
                             <m-input
                                 tabIndex="12"
-                                label="ĐT di động"
                                 type="text"
                                 ref="PhoneNumber"
                                 placeholder="0123456789"
@@ -238,9 +286,17 @@
                             />
                         </div>
                         <div class="input__field">
+                            <div
+                                class="label"
+                                @mouseleave="hiddenTooltip"
+                                @mouseover="
+                                    showTooltip($event, 'Số điện thoại cố định')
+                                "
+                            >
+                                Số ĐT cố định
+                            </div>
                             <m-input
                                 tabIndex="13"
-                                label="ĐT cố định"
                                 type="text"
                                 placeholder="0123456789"
                                 ref="LandlineNumber"
@@ -312,6 +368,8 @@
                         class="button button--gray"
                         tabIndex="18"
                         @click="handleEventClick()"
+                        @mouseleave="hiddenTooltip"
+                        @mouseover="showTooltip($event, 'Cất (Ctrl + S)')"
                     >
                         Cất
                     </div>
@@ -319,6 +377,13 @@
                         class="button button--green"
                         tabIndex="19"
                         @click="saveAndNew"
+                        @mouseleave="hiddenTooltip"
+                        @mouseover="
+                            showTooltip(
+                                $event,
+                                'Cất và thêm (Ctrl + Shift + F5)'
+                            )
+                        "
                     >
                         Cất và Thêm
                     </div>
@@ -330,19 +395,23 @@
 <script>
 import MCombobox from "@/components/base/MCombobox.vue";
 import MInput from "@/components/base/MInput.vue";
+import MTooltip from "@/components/base/MTooltip.vue";
 
 import EnumMisa from "@/ultis/enum.js";
 import fetchAPI from "@/ultis/fetchAPI.js";
 import validateHandle from "@/ultis/validateHandle.js";
 
 export default {
-    components: { MCombobox, MInput },
+    components: { MCombobox, MInput, MTooltip },
     props: ["employeeId"],
     data() {
         return {
             isActive: true,
             employee: {},
             deparments: [],
+            typeOfCustomer: {
+                ...EnumMisa.TypeOfCustomer,
+            },
             gender: {
                 ...EnumMisa.Gender,
             },
@@ -388,6 +457,9 @@ export default {
                     msg: "",
                 },
             ],
+
+            tooltipData: {},
+            isShowTooltip: false,
         };
     },
     methods: {
@@ -578,6 +650,29 @@ export default {
                 e.preventDefault();
                 this.handleEventClick();
             }
+        },
+        /**
+         * Sự kiện hiện tooltip
+         * Created: TVKhang(08/10/2022)
+         */
+        showTooltip(e, msg) {
+            this.isShowTooltip = true;
+
+            this.tooltipData = {
+                x: e.pageX,
+                y: e.pageY + 15,
+                with: e.target.offsetWidth,
+                height: e.target.offsetHeight,
+                msg,
+            };
+        },
+
+        /**
+         * Sự kiện ẩn tooltip
+         * Created: TVKhang(08/10/2022)
+         */
+        hiddenTooltip() {
+            this.isShowTooltip = false;
         },
     },
     async created() {
