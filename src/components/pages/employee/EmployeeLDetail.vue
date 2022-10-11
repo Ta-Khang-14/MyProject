@@ -15,12 +15,7 @@
                             <input
                                 type="checkbox"
                                 id="customer"
-                                :checked="
-                                    employee.typeOfCustomer ==
-                                        typeOfCustomer.Customer ||
-                                    employee.typeOfCustomer ==
-                                        typeOfCustomer.CustomerAndVendor
-                                "
+                                v-model="typeOfCustomerData.customer"
                             />
                             <label for="customer">Là khách hàng</label>
                         </div>
@@ -28,12 +23,7 @@
                             <input
                                 type="checkbox"
                                 id="vendor"
-                                :checked="
-                                    employee.typeOfCustomer ==
-                                        typeOfCustomer.Vendor ||
-                                    employee.typeOfCustomer ==
-                                        typeOfCustomer.CustomerAndVendor
-                                "
+                                v-model="typeOfCustomerData.vendor"
                             />
                             <label for="vendor">Là nhà cung cấp</label>
                         </div>
@@ -47,7 +37,7 @@
                     ></div>
                     <div
                         class="icon icon--close"
-                        @click="hiddenForm"
+                        @click="hiddenFormDetail"
                         @mouseleave="hiddenTooltip"
                         @mouseover="showTooltip($event, 'Thoát (ESC)')"
                     ></div>
@@ -300,6 +290,9 @@
                                 type="text"
                                 placeholder="0123456789"
                                 ref="LandlineNumber"
+                                :defaultValue="
+                                    employee ? employee.landlineNumber : ''
+                                "
                             />
                         </div>
                         <div class="input__field">
@@ -381,7 +374,7 @@
                         @mouseover="
                             showTooltip(
                                 $event,
-                                'Cất và thêm (Ctrl + Shift + F5)'
+                                'Cất và thêm (Ctrl + Shift + S)'
                             )
                         "
                     >
@@ -406,6 +399,7 @@ export default {
     props: ["employeeId"],
     data() {
         return {
+            type: EnumMisa.FormMode.New,
             isActive: true,
             employee: {},
             deparments: [],
@@ -415,7 +409,7 @@ export default {
             gender: {
                 ...EnumMisa.Gender,
             },
-            genderValue: 2,
+            genderValue: "",
             validate: [
                 {
                     name: "EmployeeCode",
@@ -425,41 +419,52 @@ export default {
                     ],
                     status: true,
                     msg: "",
+                    value: "",
                 },
                 {
                     name: "EmployeeName",
                     required: [EnumMisa.Validate.Required],
                     status: true,
                     msg: "",
+                    value: "",
                 },
                 {
                     name: "cbx_department",
                     required: [EnumMisa.Validate.Required],
                     status: true,
                     msg: "",
+                    value: "",
                 },
                 {
                     name: "IdentityNumber",
                     required: [EnumMisa.Validate.Number],
                     status: true,
                     msg: "",
+                    value: "",
                 },
                 {
                     name: "DateOfBirth",
                     required: [EnumMisa.Validate.Date],
                     status: true,
                     msg: "",
+                    value: "",
                 },
                 {
                     name: "IdentityDate",
                     required: [EnumMisa.Validate.Date],
                     status: true,
                     msg: "",
+                    value: "",
                 },
             ],
 
             tooltipData: {},
             isShowTooltip: false,
+
+            typeOfCustomerData: {
+                customer: false,
+                vendor: false,
+            },
         };
     },
     methods: {
@@ -467,10 +472,18 @@ export default {
          * Xủ lý sự kiện ẩn form nhập
          * Author: TVKHANG(11/09/22
          */
+        hiddenFormDetail() {
+            let newEmp = this.getInputData().employee;
+            if (!this.compareEmployee(this.employee, newEmp)) {
+                this.handleEventClick();
+                this.$emit("hiddenFormDetail", { isShow: true });
+            } else {
+                this.$emit("hiddenFormDetail", { isShow: false });
+            }
+        },
         hiddenForm() {
             this.$emit("hiddenForm");
         },
-
         /**
          * Xử lý ngày tháng để hiển thị
          * Author: TVKhang 12/09/22
@@ -520,19 +533,33 @@ export default {
                 gender: this.genderValue,
             };
 
+            if (
+                this.typeOfCustomerData.customer &&
+                this.typeOfCustomerData.vendor
+            ) {
+                employee.typeOfCustomer = this.typeOfCustomer.CustomerAndVendor;
+            } else {
+                if (this.typeOfCustomerData.customer) {
+                    employee.typeOfCustomer = this.typeOfCustomer.Customer;
+                }
+                if (this.typeOfCustomerData.vendor) {
+                    employee.typeOfCustomer = this.typeOfCustomer.Vendor;
+                }
+            }
+
             // Xóa các trường date time trống
             this.formatUpdateInfor(employee);
 
             // Lấy dữ liệu vào validate
             this.validate.forEach((e) => {
-                if (
-                    this.$refs[e["name"]].value ||
-                    this.$refs[e["name"]].value == ""
-                ) {
-                    console.log(name);
+                if (!e.name.includes("cbx")) {
                     e.value = this.$refs[e["name"]].value;
                 }
             });
+
+            this.validate[2].value = employee.departmentID
+                ? employee.departmentID
+                : "";
             validateHandle(this.validate);
 
             // Kiểm tra xem đã validate toàn bộ hay chưa
@@ -543,6 +570,7 @@ export default {
                 return {
                     status: false,
                     employee,
+                    validate: this.validate,
                 };
             }
             return {
@@ -567,11 +595,11 @@ export default {
          * Author: TVKhang 20/09/22
          */
         handleEventClick() {
-            if (this.getInputData().status) {
-                let employee = this.getInputData().employee;
-
+            let result = this.getInputData();
+            if (result.status) {
+                let employee = result.employee;
                 // Nếu tồn tại dữ liệu của nhân viên - Sửa thông tin nhân viên
-                if (this.employeeId != "") {
+                if (this.type == EnumMisa.FormMode.Edit) {
                     this.$emit("updateEmp", {
                         id: this.employee.employeeID,
                         data: employee,
@@ -579,12 +607,16 @@ export default {
                     });
                 } else {
                     // Nếu không tồn tại dữ liệu của nhân viên - Thêm mới nhân viên
-                    this.$emit("createEmp", {
-                        data: employee,
-                    });
+                    this.$emit("createEmp", employee);
                 }
-
-                console.log(employee);
+            } else {
+                let fieldError = result.validate.find((e) => !e.status);
+                this.$emit(
+                    "validateEmployeeFail",
+                    (EnumMisa.Employee[fieldError.name]
+                        ? EnumMisa.Employee[fieldError.name] + " "
+                        : "") + fieldError.msg
+                );
             }
         },
 
@@ -594,7 +626,7 @@ export default {
          */
         saveAndNew() {
             this.handleEventClick();
-            this.$emit("showFormAddEmployee");
+            this.$emit("saveAndNew");
         },
         /**
          * Lấy mã nhân viên lớn nhất
@@ -637,7 +669,7 @@ export default {
         handleEnventKeyDown(e) {
             switch (e.keyCode) {
                 case EnumMisa.KeyCode.ESC:
-                    this.hiddenForm();
+                    this.hiddenFormDetail();
                     break;
             }
 
@@ -674,6 +706,44 @@ export default {
         hiddenTooltip() {
             this.isShowTooltip = false;
         },
+
+        /**
+         * So sánh 2 nhân viên
+         * Created: TVKhang(09/10/2022)
+         */
+        compareEmployee(emp1, emp2) {
+            let emp = { ...emp1 };
+            // loại bỏ các trường k cần dùng
+            let removeField = [
+                "createdDate",
+                "createdBy",
+                "modifiedDate",
+                "modifiedBy",
+                "isActive",
+                "employeeCodeNumber",
+                "employeeID",
+            ];
+            Object.keys(emp).forEach((e) => {
+                if (removeField.includes(e)) delete emp[e];
+            });
+            emp.dateOfBirth = this.formatTime(emp.dateOfBirth);
+            emp.identityDate = this.formatTime(emp.identityDate);
+            this.formatUpdateInfor(emp);
+
+            // so sánh
+            if (Object.keys(emp).length != Object.keys(emp2).length) {
+                return false;
+            }
+
+            for (const key of Object.keys(emp)) {
+                let value = emp[key] ? emp[key] : "";
+                if (value != emp2[key]) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
     },
     async created() {
         let employee = {};
@@ -681,10 +751,33 @@ export default {
             employee = fetchAPI(
                 `${process.env.VUE_APP_URL}/Employees/${this.employeeId}`
             );
+            this.type = EnumMisa.FormMode.Edit;
         }
         let departments = fetchAPI(`${process.env.VUE_APP_URL}/Departments`);
 
         this.employee = await employee;
+
+        // Gán giá trị loại khách hàng
+        if (Number.isInteger(this.employee.typeOfCustomer)) {
+            switch (this.employee.typeOfCustomer) {
+                case this.typeOfCustomer.Customer:
+                    this.typeOfCustomerData.customer = true;
+                    break;
+                case this.typeOfCustomer.Vendor:
+                    this.typeOfCustomerData.vendor = true;
+                    break;
+                case this.typeOfCustomer.CustomerAndVendor:
+                    this.typeOfCustomerData.customer = true;
+                    this.typeOfCustomerData.vendor = true;
+                    break;
+            }
+        }
+
+        // Gán giá trị gender
+        if (Number.isInteger(this.employee.gender)) {
+            this.genderValue = this.employee.gender;
+        }
+
         this.deparments = (await departments).data;
     },
     mounted() {

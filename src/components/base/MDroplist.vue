@@ -7,9 +7,11 @@
             top: `${postionDropList.y + 30}px`,
         }"
     >
-        <div class="combobox__item">Nhân bản</div>
+        <div class="combobox__item" @click="copyEmployee">Nhân bản</div>
         <div class="combobox__item" @click="deleteEmployee">Xóa</div>
-        <div class="combobox__item">Ngừng sử dụng</div>
+        <div class="combobox__item" @click="unActiveEmployee">
+            {{ postionDropList.isActive ? "Ngừng sử dụng" : "Sử dụng" }}
+        </div>
     </div>
 </template>
 
@@ -19,6 +21,12 @@ export default {
     methods: {
         deleteEmployee() {
             this.$emit("deleteEmployee");
+        },
+        copyEmployee() {
+            this.$emit("copyEmployee");
+        },
+        unActiveEmployee() {
+            this.$emit("unActiveEmployee");
         },
     },
 };

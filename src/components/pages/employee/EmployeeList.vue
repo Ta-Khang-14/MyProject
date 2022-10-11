@@ -1,5 +1,8 @@
 <template>
     <div class="main">
+        <div class="loading__scroll--wrap" v-if="isLoading">
+            <div class="loading__scroll"></div>
+        </div>
         <div class="main--function flex">
             <div class="title">Nhân viên</div>
             <div
@@ -129,26 +132,36 @@
     <employee-detail
         v-if="isShowDetail"
         @hiddenForm="hiddenForm"
+        @hiddenFormDetail="hiddenFormDetail"
         :employeeId="selectedEmployeeId"
         @updateEmp="updateEmployeeById"
         @createEmp="createEmployee"
         @showFormAddEmployee="showFormAddEmployee"
+        @validateEmployeeFail="handleValidateResult"
+        @saveAndNew="saveAndNewHandle"
         ref="employeeDetail"
     />
     <m-drop-list
         :postionDropList="postionDropList"
         v-if="isShowDropList"
         @deleteEmployee="deleteEmployee"
+        @copyEmployee="copyEmployee"
+        @unActiveEmployee="unActiveEmployee"
+        ref="dropList"
     />
     <m-popup
+        v-if="isShowPopup"
         :msg="popupData.msg"
         :type="popupData.type"
         :data="popupData.data"
         :action="popupData.action"
+        :method="popupData.method"
         @cancelPopup="cancelPopup"
-        v-if="isShowPopup"
         @closeForm="isShowDetail = false"
         @cancelForm="cancelForm"
+        @completeActionPopup="getResultPopup"
+        @loading="loading"
+        ref="popup"
     />
 </template>
 
@@ -164,6 +177,7 @@ import MToastMessage from "@/components/base/MToastMessage.vue";
 import fetchAPI from "@/ultis/fetchAPI.js";
 import EnumMisa from "@/ultis/enum.js";
 import { simpleFormatString, handleRecordCode } from "@/ultis/format.js";
+import EmployeeRequest from "@/request/employee.js";
 import pagination from "@/ultis/pagination.js";
 export default {
     components: {
@@ -196,6 +210,7 @@ export default {
                 type: 0,
                 action: 0,
                 data: {},
+                method: () => ({ erroCode: 1 }),
             },
 
             pagination: {
@@ -219,10 +234,18 @@ export default {
             tooltipData: {},
             isShowTooltip: false,
 
+            isSaveAndNew: false,
+            isLoading: false,
             excelExportLink: `${process.env.VUE_APP_URL}/Employees/exportEmployees`,
         };
     },
     methods: {
+        loading() {
+            this.isLoading = true;
+        },
+        saveAndNewHandle() {
+            this.isSaveAndNew = true;
+        },
         // Xử lý sự hiện hiện form thêm mới nhân viên
         // Author: TVKHANG(11/09/22)
         async showFormAddEmployee() {
@@ -234,17 +257,19 @@ export default {
 
             this.$refs.employeeDetail.employee.employeeCode = employeeCode;
         },
-
         // Xủ lý sự kiện ẩn form thêm mới nhân viên
         // Author: TVKHANG(11/09/22)
         hiddenForm() {
             this.isShowDetail = false;
         },
+        hiddenFormDetail(data) {
+            this.isShowDetail = data.isShow;
+        },
         cancelForm(data) {
             this.cancelPopup(data);
             this.hiddenForm();
         },
-        // Lấy mã nhân viên lớn nhất từ serve
+        // Lấy mã nhân viên lớn nhất từ server
         async getMaxCode() {
             let code = await fetchAPI(
                 `${process.env.VUE_APP_URL}/Employees/max-code`
@@ -264,6 +289,7 @@ export default {
         // Bắt sự kiện click btn reload lại data
         // Author: TVKhang 12/09/22
         async reload() {
+            this.employees = [];
             this.employees = await fetchAPI(
                 `${process.env.VUE_APP_URL}/Employees/filter?offset=${
                     (this.pagination.currentPage - 1) *
@@ -275,59 +301,93 @@ export default {
 
         // Lấy vị trí droplist được click
         // Author: TVKhang 14/09/22
-        getPrositionDropList(data) {
+        async getPrositionDropList(data) {
             this.isShowDropList = !this.isShowDropList;
-            this.postionDropList = data;
+
+            let emp = await fetchAPI(
+                `${process.env.VUE_APP_URL}/Employees/${data.id}`
+            );
+
+            this.postionDropList = { ...data, isActive: emp.isActive };
         },
 
         // Bắt sự kiện click vào xóa
         // Author: TVKhang 18/09/22
         async deleteEmployee() {
             // Truyền dữ liệu cho popup
-            let msg = `Bạn có muốn xóa nhân viên ${this.postionDropList.code} không?`;
-            let type = EnumMisa.PopUp.Warning;
-            let action = EnumMisa.PopUp.Action.Delete;
-            let data = {
-                id: this.postionDropList.id,
-                code: this.postionDropList.code,
-            };
-            this.tranferDataToPopup(msg, type, action, data);
+            this.tranferDataToPopup(
+                `Bạn có muốn xóa nhân viên ${this.postionDropList.code} không?`,
+                EnumMisa.PopUp.Warning,
+                EnumMisa.PopUp.Action.Delete,
+                { employeeId: this.postionDropList.id },
+                EmployeeRequest.deleteEmployeeById
+            );
 
             // Ẩn drop list khi hiện popup
             this.$refs.tableEmployee.isShowEditCbx = false;
             this.isShowDropList = false;
         },
+        /**
+         * Xử lý kết quả trả về từ popup
+         * Created: TVKhang(08/10/22)
+         */
+        getResultPopup(result) {
+            this.isLoading = false;
+            this.isShowPopup = false;
+            if (
+                Number.isInteger(result.errorCode) ||
+                Number.isInteger(result.statusCode)
+            ) {
+                this.showToast(result.userMsg, EnumMisa.Toast.Danger);
+            } else {
+                this.showToast(result.completeMsg, EnumMisa.Toast.Success);
+                this.reload();
+            }
+            this.hiddenForm();
 
+            setTimeout(() => {
+                if (this.isSaveAndNew) {
+                    this.showFormAddEmployee();
+                    this.isSaveAndNew = false;
+                }
+            });
+        },
         // Bắt sự kiện click vào sửa
         // Author: TVKhang 19/09/22
-        updateEmployeeById(emp) {
+        async updateEmployeeById(data) {
             //Truyền dữ liệu cho popup
-            let msg = `Bạn có muốn sửa nhân viên ${emp.code} không?`;
-            let type = EnumMisa.PopUp.Question;
-            let action = EnumMisa.PopUp.Action.Update;
-            let data = {
-                id: emp.id,
-                data: emp.data,
-            };
-            this.tranferDataToPopup(msg, type, action, data);
+            this.tranferDataToPopup(
+                `Bạn có muốn sửa nhân viên ${data.code} không?`,
+                EnumMisa.PopUp.Question,
+                EnumMisa.PopUp.Action.Update,
+                { employeeId: data.id, data: data.data },
+                EmployeeRequest.updateEmployeeById
+            );
+
+            await this.reload();
         },
 
         // Bắt sự kiện click vào cất
         // Author: TVKhang 19/09/22
         createEmployee(data) {
-            let msg = `Bạn có muốn thêm mới nhân viên không?`;
-            let type = EnumMisa.PopUp.Question;
-            let action = EnumMisa.PopUp.Action.New;
-            this.tranferDataToPopup(msg, type, action, data);
+            this.tranferDataToPopup(
+                `Bạn có muốn thêm mới nhân viên không?`,
+                EnumMisa.PopUp.Question,
+                EnumMisa.PopUp.Action.New,
+                data,
+                EmployeeRequest.createEmployee
+            );
         },
 
         // Truyền dữ liệu cho popup
-        tranferDataToPopup(msg, type, action, data) {
+        tranferDataToPopup(msg, type, action, data, method) {
             this.isShowPopup = true;
+
             this.popupData.msg = msg;
             this.popupData.type = type;
             this.popupData.data = data;
             this.popupData.action = action;
+            this.popupData.method = method;
         },
 
         // Bắt sự kiện click vào nút hủy Popup
@@ -396,15 +456,18 @@ export default {
 
         // Thực hiện xóa nhiều vân viên
         async deleteBatchEmployee() {
-            this.isShowDetail = false;
+            let listEmployee = this.$refs.tableEmployee.listSelectedEmployee;
 
-            await fetchAPI(
-                `${process.env.VUE_APP_URL}/Employees/delete-batch`,
-                "post",
-                "",
-                this.$refs.tableEmployee.listSelectedEmployee
+            // Truyền dữ liệu cho popup
+            this.tranferDataToPopup(
+                `Bạn có muốn xóa ${listEmployee.length} nhân viên không?`,
+                EnumMisa.PopUp.Warning,
+                EnumMisa.PopUp.Action.Delete,
+                { listSelectedEmployee: listEmployee },
+                EmployeeRequest.deleteBatchEmployee
             );
-
+            this.$refs.tableEmployee.listSelectedEmployee = [];
+            this.isShowDeleteAll = false;
             await this.reload();
         },
 
@@ -441,11 +504,69 @@ export default {
 
             // Tự động ẩn toast sau 3s
             setTimeout(() => {
-                this.$refs["toast"].isShowToast = true;
+                this.$refs["toast"].isShowToast = false;
             }, 3000);
 
-            this.$$refs["toast"].data.msg = msg;
-            this.$$refs["toast"].data.status = status;
+            this.$refs["toast"].data.msg = msg;
+            this.$refs["toast"].data.status = status;
+
+            this.hiddenForm();
+        },
+
+        /**
+         * Mở popup thông báo validate fail
+         * CreatedBy: TVKhang(08/10/2022)
+         */
+        handleValidateResult(msg) {
+            // Truyền dữ liệu cho popup
+            this.tranferDataToPopup(
+                msg,
+                EnumMisa.PopUp.Error,
+                EnumMisa.PopUp.Action.Notify
+            );
+        },
+
+        /**
+         * Mở form nhân bản nhân viên
+         * CreatedBy: TVKhang(10/10/2022)
+         */
+        async copyEmployee() {
+            this.showFormAddEmployee();
+            let emp = await fetchAPI(
+                `${process.env.VUE_APP_URL}/Employees/${this.postionDropList.id}`
+            );
+
+            this.$refs.employeeDetail.employee = emp;
+
+            setTimeout(async () => {
+                let employeeCode = await this.getMaxCode();
+                employeeCode = handleRecordCode(employeeCode, "NV-");
+
+                this.$refs.employeeDetail.employee.employeeCode = employeeCode;
+            });
+
+            this.$refs.tableEmployee.isShowEditCbx = false;
+            this.isShowDropList = false;
+        },
+        /**
+         * Nhưng sử dụng 1 nhân viên
+         * CreatedBy: TVKhang(10/10/2022)
+         */
+        async unActiveEmployee() {
+            let emp = await fetchAPI(
+                `${process.env.VUE_APP_URL}/Employees/${this.postionDropList.id}`
+            );
+            emp.isActive = !emp.isActive;
+            await fetchAPI(
+                `${process.env.VUE_APP_URL}/Employees/${this.postionDropList.id}`,
+                "PUT",
+                "",
+                emp
+            );
+            this.postionDropList.isActive = emp.isActive;
+
+            this.$refs.tableEmployee.isShowEditCbx = false;
+            this.isShowDropList = false;
         },
     },
     // Gọi dữ liệu từ API

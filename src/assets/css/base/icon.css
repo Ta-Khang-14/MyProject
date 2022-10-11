@@ -124,3 +124,9 @@
     width: 36px;
     height: 37px;
 }
+.icon__error {
+    background: url("../../Resource/img/Sprites.64af8f61.svg") no-repeat;
+    background-position: -752px -462px;
+    width: 36px;
+    height: 37px;
+}

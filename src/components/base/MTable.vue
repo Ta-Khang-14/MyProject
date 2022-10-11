@@ -37,7 +37,18 @@
                 <th class="text--center">chức năng</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody v-if="employees.length == 0">
+            <tr v-for="element in Array(6).fill(1)" :key="element">
+                <td
+                    v-for="element in Array(12).fill(1)"
+                    :key="element"
+                    class="loading__seketon--wrap"
+                >
+                    <div class="loading__seketon"></div>
+                </td>
+            </tr>
+        </tbody>
+        <tbody v-if="employees.length > 0">
             <tr
                 class="table__row--bold"
                 v-for="(employee, index) in employees"
@@ -48,7 +59,11 @@
             >
                 <td class="text--center" @dblclick.stop="true">
                     <input
-                        :checked="isCheckedAll"
+                        :checked="
+                            listSelectedEmployee.findIndex(
+                                (e) => e == employee.employeeID
+                            ) != -1
+                        "
                         type="checkbox"
                         class="input--selected"
                         @input="selectEmployee(employee)"
@@ -57,7 +72,7 @@
                 <td class="text--left">{{ employee.employeeCode || "" }}</td>
                 <td class="text--left">{{ employee.employeeName || "" }}</td>
                 <td class="text--left">{{ gender[employee.gender] || "" }}</td>
-                <td class="text--right">
+                <td class="text--center">
                     {{ formatTime(employee.dateOfBirth) || "" }}
                 </td>
                 <td class="text--left">{{ employee.identityNumber || "" }}</td>
@@ -77,7 +92,17 @@
 
                 <td class="text--center" @dblclick.stop="true">
                     <div class="table__item--option">
-                        <div class="custom__text">Sửa</div>
+                        <div
+                            class="custom__text"
+                            @click="
+                                showFormEditEmployee(
+                                    employee.employeeID,
+                                    formEnum.Edit
+                                )
+                            "
+                        >
+                            Sửa
+                        </div>
                         <div
                             class="combobox"
                             @click="
@@ -142,6 +167,8 @@ export default {
 
             tooltipData: {},
             isShowTooltip: false,
+
+            currentRow: -1,
         };
     },
     methods: {
@@ -241,7 +268,6 @@ export default {
             } else {
                 this.listSelectedEmployee = [];
             }
-            console.log(this.listSelectedEmployee);
         },
     },
 };

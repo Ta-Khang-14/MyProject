@@ -5,7 +5,7 @@
 }
 .main--function {
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
 }
 .main--function .button {
     background-color: var(--main-green-color);
@@ -16,14 +16,14 @@
 .main__table {
     height: calc(100% - 62px);
     background-color: var(--color-white);
-    border-radius: 2px;
+    border-radius: 4px;
     position: relative;
     padding: 16px;
     padding-bottom: 0;
 }
 .main__table--search {
     justify-content: space-between;
-    margin-bottom: 32px;
+    margin-bottom: 16px;
 }
 .main__table--action {
     border: 2px solid black;
@@ -31,7 +31,7 @@
     position: relative;
     padding: 0px 16px;
     cursor: pointer;
-    border-radius: 20px;
+    border-radius: 4px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -39,20 +39,20 @@
 }
 
 .main__table--option {
-    padding: 2px 0px;
-    width: 60%;
     position: absolute;
     right: 0;
     top: calc(100% + 3px);
     border: 1px solid var(--button-gray-color);
-    border-radius: 2px;
+    border-radius: 4px;
     z-index: 100;
+    overflow: hidden;
 }
 .main__table--optionList {
-    padding: 5px 10px;
+    padding: 8px 16px;
     width: 100%;
     cursor: pointer;
     font-weight: 300;
+    background-color: var(--color-white);
 }
 
 .main__table--optionList:hover,
@@ -101,10 +101,10 @@
     display: none;
 }
 .main__table {
-    height: calc(100% - 48px);
+    height: calc(100% - 40px);
 }
 .main__table--content {
-    height: calc(100% - 112px);
+    height: calc(100% - 104px);
 }
 .main__table--detail {
     width: 100%;
@@ -157,6 +157,10 @@
     background-color: var(--table-row-hover);
     cursor: pointer;
 }
+.main__table--detail table tr.table__row--bold.selected {
+    background-color: var(--table-row-hover);
+    cursor: pointer;
+}
 /* CUSTOM STICKY TABLE COLUMN */
 .main__table--detail table tr td:last-child,
 .main__table--detail table tr td:first-child,
@@ -189,7 +193,13 @@
 .main__table--detail table tr.table__row--bold:hover td:last-child {
     background-color: var(--table-row-hover);
 }
+.main__table--detail table tr:last-child td {
+    border-bottom: none;
+}
 /* ---------------------PAGINGS------------------------ */
+.main__table--paging {
+    border-top: 1px solid var(--table-border-color);
+}
 .paging--pages .cbx__button.clicked div#icon__arrowDown--black {
     transform: rotate(180deg);
 }
@@ -254,4 +264,68 @@
 .table__item--option .combobox .cbx__button.cbx__button.clicked {
     background-color: unset;
     border: 1px solid var(--color-blue);
+}
+
+.main__table--detail::-webkit-scrollbar-track {
+    margin-top: 48px;
+}
+.loading__seketon--wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.loading__seketon {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background-image: linear-gradient(
+        to right,
+        rgb(223, 223, 223),
+        rgb(184, 184, 184)
+    );
+    background-size: 400% 400%;
+    z-index: 1;
+    animation: gradient 1s ease infinite;
+}
+.loading__scroll--wrap {
+    position: absolute;
+    z-index: 9999;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.loading__scroll {
+    width: 60px;
+    height: 60px;
+    background-image: url("../../Resource/loading.svg");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    animation: scroll 1s linear infinite;
+}
+@keyframes gradient {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 50% 50%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+@keyframes scroll {
+    0% {
+        transform: rotate(0);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

@@ -4,6 +4,6 @@
 .droplist__data {
     width: 128px;
     height: 98px;
-    border-radius: 2px;
+    border-radius: 4px;
     overflow: hidden;
 }

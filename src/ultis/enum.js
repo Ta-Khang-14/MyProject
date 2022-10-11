@@ -62,6 +62,13 @@ const EnumMisa = {
         Success: 1,
         Danger: 2,
     },
+
+    // Enum nhân viên
+    Employee: {
+        EmployeeCode: "Mã nhân viên",
+        EmployeeName: "Tên nhân viên",
+        cbx_department: "Phòng ban",
+    },
 };
 
 export default EnumMisa;

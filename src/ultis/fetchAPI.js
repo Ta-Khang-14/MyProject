@@ -15,6 +15,6 @@ export default async function fetchData(api, method = "GET", jwt = "", body) {
         return data;
     } catch (error) {
         console.log("Có lỗi: ", error);
-        return "";
+        return { statusCode: 1 };
     }
 }

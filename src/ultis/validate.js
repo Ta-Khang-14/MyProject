@@ -33,7 +33,7 @@ function validateRequired(data) {
     if (data.trim() == "") {
         return {
             status: false,
-            msg: "Không được để trống",
+            msg: "không được để trống",
         };
     }
     return {
@@ -64,7 +64,7 @@ function validateEmployeeCode(data) {
         if (!/^NV-\d{8,}$/.test(data)) {
             return {
                 status: false,
-                msg: "Sai định dạng",
+                msg: "sai định dạng",
             };
         }
     }
@@ -80,7 +80,7 @@ function validateNumber(data) {
         if (!/^[0-9]{0,255}$/.test(data)) {
             return {
                 status: false,
-                msg: "Sai định dạng",
+                msg: "sai định dạng",
             };
         }
     }
